@@ -1,0 +1,6 @@
+{
+	"minimum-stability": "dev",
+    "require": {
+       "phpoffice/phpword": "v0.12.*"
+    }
+}

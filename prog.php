@@ -1,0 +1,137 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" href="css/Formitable_style.css">
+<html>
+<head>
+<script src="include/jquery.min.js"></script>
+<script>
+ $(function() {
+	$('textarea').each(function() {
+		$(this).height(0);
+		$(this).height($(this).prop('scrollHeight'));
+	});
+});
+</script>
+<title><?php echo iconv('Windows-1253', 'UTF-8', 'Σελίδα Προγράμματος'); ?></title>
+</head>
+<body>
+<div id="content">
+<?php
+
+// Displays program record as a form (via Formitable), for editing and exporting to HTML
+
+require_once('conf.php');
+session_start();
+$admin = $_SESSION['admin'];
+
+//include class, create new Formitable, set primary key field name 
+include("include/Formitable.class.php");
+
+$myconn = mysql_connect($prDbhost,$prDbusername,$prDbpassword);
+
+mysql_query("SET NAMES 'utf8'", $myconn);
+mysql_query("SET CHARACTER SET 'utf8'", $myconn); 
+
+// initialize Formitable
+$newForm = new Formitable($myconn,$prDbname,$prTable); 
+
+$newForm->setPrimaryKey("id"); 
+
+// if form has been submitted, call Formitable submit method
+if( isset($_POST['submit']) ) 
+{
+	// if not admin, skip (don't update) the following fields
+	if (!$admin)
+	{
+		$skipped = array('emails1','schnip','dimo','sch1','sch2');
+		$newForm->skipFields($skipped);
+	}
+	$newForm->submitForm(); 
+}
+
+//otherwise continue with form customization 
+else { 
+	//retrieve a record for update if GET var is set 
+	if ( isset($_GET['id']) ) 
+			$newForm->getRecord($_GET['id']);
+		else{
+			die ("Error...(no get var)");
+	}
+	// check if school or admin, else die
+	if (!$admin)
+	{
+		$email = $newForm->getFieldValue('emails1');
+		if (!strcmp($email,$_SESSION['email1']) || !strcmp($email,$_SESSION['email2']))
+			{}
+		// not a school. Exit...
+		else
+		{
+			$errormsg = iconv('Windows-1253', 'UTF-8', '<h2>Λάθος. Δεν έχετε δικαίωμα να δείτε αυτό το πρόγραμμα...</h2>');
+			die ($errormsg);
+		}
+	}
+	
+	$title = $newForm->getFieldValue('titel');
+	$updated = $newForm->getFieldValue('timestamp');
+	echo iconv('Windows-1253','UTF-8',"<h1><i>Πρόγραμμα:</i> "). $title . "</h1>";
+	  
+	// hide fields from users
+	$hidden = array('id','timestamp','vev');
+	$newForm->hideFields($hidden); 
+	
+	// force types
+	//$newForm->forceType('visits','select');
+	//$newForm->forceType('duration','select');
+    
+    //set custom field labels 
+	 $rows = array (
+	 'emails1', 'schnip', 'dimo', 'sch1', 'princ1', 'praxi', 'sch2','princ2','emails2',
+	 'titel' ,'subti' ,'categ' ,'theme' ,'goal' ,'meth' ,'pedia' ,
+	 'dura' ,'m1' ,'m2' ,'m3' ,'m4' ,'m5' ,'m6' ,'visit' ,'act' ,'prsnt',
+	 'nam1' ,'sur1' ,'email1' ,'mob1' ,'eid1' ,'his1' ,'qua1' ,
+	 'nam2' ,'sur2' ,'email2' ,'mob2' ,'eid2' ,'his2' ,'qua2' ,
+	 'nam3' ,'sur3' ,'email3' ,'mob3' ,'eid3' ,'his3' ,'qua3' ,
+	 'nam4' ,'sur4' ,'email4' ,'mob4' ,'eid4' ,'his4' ,'qua4' ,'Nr' ,'cha' ,'grade' ,'notes','chk','vev'
+	 );
+	 
+	 $labels = array ('email Σχολείου','Τύπος Μονάδας','Δήμος','Σχολική Μονάδα','Ονοματεπώνυμο Διευθυντή/ντριας- Προϊσταμένου/νης','Πράξη ανάθεσης', 'Συστεγαζόμενη Σχολική Μονάδα', 'Δ/ντής/ντρια Συστεγαζόμενης', 'email Συστεγαζόμενης',
+	 'Τίτλος προγράμματος','Υπότιτλος-Υποθέματα','Κατηγορία προγράμματος','Θεματολογία','Παιδαγωγικοί στόχοι','Μεθοδολογία Υλοποίησης-Συνεργασίες','Πεδία σύνδεσης με τα προγράμματα σπουδών των αντίστοιχων γνωστικών αντικειμένων',
+	 'Διάρκεια προγράμματος (μήνες)','1ος Μήνας','2ος Μήνας','3ος Μήνας','4ος Μήνας','5ος Μήνας','6ος Μήνας','Αριθμός επισκέψεων','Δράσεις','Πρόθεση παρουσίασης του προγράμματος στη Γιορτή Μαθητικής Δημιουργίας 2016',
+	 'Όνομα 1ου εκπ/κού','Επώνυμο 1ου εκπ/κού','email 1ου εκπ/κού','Κινητό τηλέφωνο 1ου εκπ/κού','Ειδικότητα 1ου εκπ/κού','Υλοποίηση προγραμμάτων 1ου εκπ/κού στο παρελθόν','Επιμόρφωση 1ου εκπ/κού',
+	 'Όνομα 2ου εκπ/κού','Επώνυμο 2ου εκπ/κού','email 2ου εκπ/κού','Κινητό τηλέφωνο 2ου εκπ/κού','Ειδικότητα 2ου εκπ/κού','Υλοποίηση προγραμμάτων 2ου εκπ/κού στο παρελθόν','Επιμόρφωση 2ου εκπ/κού',
+	 'Όνομα 3ου εκπ/κού','Επώνυμο 3ου εκπ/κού','email 3ου εκπ/κού','Κινητό τηλέφωνο 3ου εκπ/κού','Ειδικότητα 3ου εκπ/κού','Υλοποίηση προγραμμάτων 3ου εκπ/κού στο παρελθόν','Επιμόρφωση 3ου εκπ/κού',
+	 'Όνομα 4ου εκπ/κού','Επώνυμο 4ου εκπ/κού','email 4ου εκπ/κού','Κινητό τηλέφωνο 4ου εκπ/κού','Ειδικότητα 4ου εκπ/κού','Υλοποίηση προγραμμάτων 4ου εκπ/κού στο παρελθόν','Επιμόρφωση 4ου εκπ/κού', 
+	 'Αριθμός Μαθητών','Χαρακτηριστικά ομάδας','Τάξεις','Τυχόν παρατηρήσεις-επισημάνσεις',
+	 'Βεβαιώνεται ότι ο/η δ/ντής/τρια ή προϊσταμένος/νη της σχολικής μονάδας έλεγξε το παρόν σχέδιο προγράμματος σχολικών δραστηριοτήτων, έκανε απαραίτητες τυχόν διορθώσεις και βεβαιώνει ότι τα στοιχεία που αναφέρονται στο παρόν σχέδιο προγράμματος είναι σωστά.', 'Ο/Η  δ/ντής/τρια ή προϊσταμένος/νη βεβαιώνει ότι το συγκεκριμένο σχέδιο προγράμματος σχολικών δραστηριοτήτων ολοκληρώθηκε επιτυχώς και τα αποτελέσματα του προγράμματος είναι διαθέσιμα στο σχολική μονάδα.');
+	// convert greek labels to utf8
+	array_walk(
+		$labels,
+		function (&$entry) {
+			$entry = iconv('Windows-1253', 'UTF-8', $entry);
+		}
+	);
+	 
+	 $newForm->labelFields( $rows, $labels ); 
+
+	//encryption (not working)
+	//$key = "$Ftg/%)poa";
+	//$newForm->setEncryptionKey($key);
+	
+	//output form 
+	$newForm->printForm(array(),array(iconv('Windows-1253', 'UTF-8', 'Υποβολή'),'','Reset Form',false,true)); 
+	
+	// display print button
+	$printText = iconv('Windows-1253', 'UTF-8', 'Εκτύπωση');
+	echo "<input type=\"button\" onclick=\"window.open('exp.php?id=".$newForm->getFieldValue('id')."');\" value=\"".$printText."\" />";
+
+	//$shm = '<h4>ΣΗΜΕΙΩΣΕΙΣ:<br>1. Για την αποθήκευση οποιασδήποτε αλλαγής πατήστε \'Υποβολή\'.<br>2. Τα πεδία: Σχολική μονάδα, Τίτλος προγράμματος, Όνομα-Επώνυμο-Κλάδος εκπ/κών ΔΕ μεταβάλλονται.<br>Για τη μεταβολή τους επικοινωνήστε με το τμήμα Σχολικών Δραστηριοτήτων, τηλ. 2810529318, email: tay@dipe.ira.sch.gr</h4><br>';
+	$shm = '<h4>ΣΗΜΕΙΩΣΕΙΣ:<br>Για την αποθήκευση οποιασδήποτε αλλαγής πατήστε \'Υποβολή\'.</h4><br>';
+	echo iconv('Windows-1253', 'UTF-8', $shm);
+	// display record timestamp
+	if ($updated>0)
+		echo "<small>".iconv('Windows-1253', 'UTF-8', 'Τελευταία ανανέωση: ').date('d/m/Y, H:i:s',strtotime($updated))."</small>";
+}
+?>
+<small></small>
+</div>
+</body>
+</html>
