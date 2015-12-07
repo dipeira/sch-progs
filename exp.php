@@ -20,7 +20,7 @@ function createFile($dt) {
 	$templ = new \PhpOffice\PhpWord\TemplateProcessor('files/tmpl.docx');
 
 	foreach ($dt as $k => $v)
-		$templ->setValue("$k", $v);
+		$templ->setValue("$k", htmlspecialchars($v));
 	
 	$docxFile = "files/exp_".$dt['id'].".docx";
 	$templ->saveAs($docxFile);
