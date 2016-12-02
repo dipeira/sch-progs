@@ -1,6 +1,7 @@
 {
 	"minimum-stability": "dev",
     "require": {
-       "phpoffice/phpword": "v0.12.*"
+       "phpoffice/phpword": "v0.12.*",
+       "jasig/phpcas": "1.3.4"
     }
 }

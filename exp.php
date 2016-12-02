@@ -19,8 +19,9 @@ function createFile($dt) {
 	// load, alter and save new docx based on template
 	$templ = new \PhpOffice\PhpWord\TemplateProcessor('files/tmpl.docx');
 
-	foreach ($dt as $k => $v)
+	foreach ($dt as $k => $v) {
 		$templ->setValue("$k", htmlspecialchars($v));
+  }
 	
 	$docxFile = "files/exp_".$dt['id'].".docx";
 	$templ->saveAs($docxFile);
@@ -53,6 +54,8 @@ function createFile($dt) {
 // Retrieves the selected record, creates an html report (based on a docx template) and redirects to it.
 
 session_start();
+require_once('conf.php');
+
 $admin = $_SESSION['admin'];
 
 if (isset($_GET['id']))

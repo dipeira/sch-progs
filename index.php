@@ -1,13 +1,15 @@
 <?php
-require_once('conf.php');
 session_start();
+
+require_once('conf.php');
+require_once ('phpgrid/conf.php');
 
 // If in production, login using sch.gr's CAS server
 // (To be able to login via sch.gr's CAS, the app must be whitelisted from their admins)
 if (!$prDebug)
 {
 	// phpCAS simple client, import phpCAS lib
-			include_once('include/CAS/CAS.php');
+      require_once('vendor/jasig/phpcas/CAS.php');
 			// initialize phpCAS using SAML
 			phpCAS::client(SAML_VERSION_1_1,'sso-test.sch.gr',443,'');
 			// if logout
@@ -41,21 +43,23 @@ header('Content-Type: text/html; charset=utf-8');
 <body>
 <?php
 // declare and prepare phpgrid
-require_once ('phpgrid/conf.php');
 
-$dg = new C_DataGrid("SELECT id,sch1,titel FROM $prTable", "id", "$prTable");
+$dg = new C_DataGrid("SELECT id,sch1,titel,chk,timestamp FROM $prTable", "id", "$prTable");
 
 $dg->set_locale('el');
 
 $dg -> set_caption(mb_convert_encoding("Προγράμματα Σχολικών Δραστηριοτήτων $prSxetos", "utf-8","iso-8859-7" ));
 
 $dg ->set_col_property("id", array("name"=>"A/A", "width"=>15));
-//$dg ->set_col_property("done", array("name"=>"done", "width"=>15));
+$dg ->set_col_property("sch1", array("name"=>"A/A", "width"=>70));
+$dg ->set_col_property("chk", array("name"=>"checked", "width"=>20));
+$dg ->set_col_property("timestamp", array("name"=>"timestamp", "width"=>45));
 //$dg ->set_col_property("agree", array("name"=>"done", "width"=>15));
 $dg ->set_col_title("id", "A/A");
 $dg ->set_col_title("sch1", mb_convert_encoding("Όνομα Σχολείου", "utf-8","iso-8859-7" ));
 $dg ->set_col_title("titel", mb_convert_encoding("Τίτλος προγράμματος", "utf-8","iso-8859-7" ));
-//$dg ->set_col_title("done", mb_convert_encoding("Ξεκίνησε;", "utf-8","iso-8859-7" ));
+$dg ->set_col_title("chk", mb_convert_encoding("Έλεγχος", "utf-8","iso-8859-7" ));
+$dg ->set_col_title("timestamp", mb_convert_encoding("Τελ. Μεταβολή", "utf-8","iso-8859-7" ));
 //$dg ->set_col_title("agree", mb_convert_encoding("Δήλ.Ολοκλ.", "utf-8","iso-8859-7" ));
 
 $dg -> enable_search(true);
@@ -65,9 +69,9 @@ $dg -> set_col_dynalink("id", "prog.php", "id");
 $dg -> set_col_dynalink("titel", "prog.php", "id");
 
 // get data from CAS server
+$_SESSION['admin'] = 0;
 if (!$prDebug)
 {
-	$_SESSION['admin'] = 0;
 	$sch_name = phpCAS::getAttribute('description');
 	$uid = phpCAS::getUser();
 	$em1 = $uid . "@sch.gr";
@@ -83,6 +87,8 @@ else{
 	$uid = $pruid;
 	$em1 = $prem1;
 	$em2 = $prem2;
+  if (!strcmp($uid,'dipeira') || !strcmp($uid,'taypeira'))
+		$_SESSION['admin'] = 1;
 }
 
 if (isset($sch_name))
@@ -115,8 +121,9 @@ if (isset($em1) || isset($em2))
 		die($out);*/
 	}
 	// if admin, display all records
-	elseif (!strcmp($uid,$prAdmin1) || !strcmp($uid,$prAdmin2))
+	elseif (!strcmp($uid,$prAdmin1) || !strcmp($uid,$prAdmin2)){
 		$dg -> display();
+  }
 }
 else
 	die('Authentication Error...');
