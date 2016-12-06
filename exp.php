@@ -74,7 +74,7 @@ if ($conn->connect_error) {
 } 
 
 // query db
-$sql = "SELECT * FROM progs WHERE id = $progId";
+$sql = "SELECT p.*, s1.name as s1name, s2.name as s2name FROM $prTable p JOIN $schTable s1 ON p.sch1 = s1.id JOIN $schTable s2 ON p.sch2 = s2.id WHERE p.id = $progId";
 $result = mysqli_query($conn,$sql);
 // fetch record
 $rec = mysqli_fetch_assoc($result);

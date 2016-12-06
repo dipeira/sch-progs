@@ -18,7 +18,7 @@ header('Content-Type: text/html; charset=utf-8');
 require_once ('conf.php');
 require_once ('phpgrid/conf.php');
 
-$dg = new C_DataGrid("SELECT * FROM $prTable", "id", "$prTable");
+$dg = new C_DataGrid("SELECT * FROM $prTable pr JOIN $schTable sc1 ON pr.sch1 = sc1.id JOIN $schTable sc2 ON pr.sch2 = sc2.id", "id", "$prTable");
 
 $dg->set_locale('el');
 

@@ -21,7 +21,7 @@ class Formitable {
 	// these vars hold the string returned on success or fail of record INSERT/UPDATE
 	var $msg_insertSuccess = '<center><label class="font">Form has been submitted successfully.</label></center>';
 	var $msg_insertFail = '<center><label class="font"><strong>An error occurred.</strong><br/>Form submission failed.</label></center>';
-	var $msg_updateSuccess = '<center><label class="font"><h3>Επιτυχής ενημέρωση!</h3><br><a href=\'javascript:window.open("","_self").close();\'>Κλείσιμο καρτέλας</a></label></center>';
+	var $msg_updateSuccess = '<center><label class="font">Record has been updated successfully.</label></center>';
 	var $msg_updateFail = '<center><label class="font"><strong>An error occurred.</strong><br/>Record update failed.</label></center>';
 
 	// these vars hold the strings output before and after error messages
@@ -74,7 +74,7 @@ class Formitable {
 		$this->tplStart = '{';
 		$this->tplEnd = '}';
 
-		$this->mysql_errors = true;
+		$this->mysql_errors = false;
 
 		// process $_POST
 		$this->_post = $this->_processPost();
@@ -233,8 +233,7 @@ class Formitable {
 			// if a "set" field is missing then assign empty value
 			// and if any other field type is missing then assign NULL
 			if( isset($this->_post['formitable_signature']) ){
-				//$this->_signature = split(',', $this->decrypt($this->_post['formitable_signature']));
-				$this->_signature = explode(',', $this->decrypt($this->_post['formitable_signature']));
+				$this->_signature = split(',', $this->decrypt($this->_post['formitable_signature']));
 				foreach($this->_signature as $key){
 					if(!isset($this->_post[$key])){
 						if( isset($this->fields[$key]) && $this->fields[$key]=='set' ){
@@ -289,7 +288,7 @@ class Formitable {
 				}
 
 			}
-			
+
 			// cycle through $this->_post variables to form query assignments
 			foreach($this->_post as $key=>$value){
 
@@ -325,8 +324,8 @@ class Formitable {
 					
 					// skip success message when first page or multiform node
 					if( $this->_multi != 'node' && (!isset($this->_post['formitable_multipage']) || $this->_post['formitable_multipage'] != 'start') ){
-						if($echo || !$this->returnOutput) echo iconv('Windows-1253', 'UTF-8', $this->msg_updateSuccess);
-						else return iconv('Windows-1253', 'UTF-8', $this->msg_updateSuccess);
+						if($echo || !$this->returnOutput) echo $this->msg_updateSuccess;
+						else return $this->msg_updateSuccess;
 					}
 					
 				}
@@ -427,9 +426,6 @@ class Formitable {
 	// new in version 1.5
 	function query($sql,$result_type=false){
 		@mysql_select_db($this->DB,$this->conn);
-		//sugarvag
-		mysql_query("SET NAMES 'utf8'", $this->conn);
-		mysql_query("SET CHARACTER SET 'utf8'", $this->conn); 
 		$result = @mysql_query($sql,$this->conn);
 		if( $result && in_array($result_type,array(MYSQL_ASSOC,MYSQL_NUM,MYSQL_BOTH)) ){
 			$rows = array();
@@ -1250,8 +1246,7 @@ class Formitable {
 				$pieces = explode('(',$row['Type']);
 				if( count($pieces) > 1 && ($pieces[0] == 'enum' || $pieces[0] == 'set') ){
 					// trim parens and separate values, 1 == "'" and -2 == "')"
-					//$options = split("','",substr($pieces[1],1,-2));
-					$options = explode("','",substr($pieces[1],1,-2));
+					$options = split("','",substr($pieces[1],1,-2));
 					$fields[$row['Field']] = $options;
 				}
 			}

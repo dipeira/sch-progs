@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=utf-8');
 session_start();
 
 require_once('conf.php');
@@ -8,47 +9,46 @@ require_once ('phpgrid/conf.php');
 // (To be able to login via sch.gr's CAS, the app must be whitelisted from their admins)
 if (!$prDebug)
 {
-	// phpCAS simple client, import phpCAS lib
-      require_once('vendor/jasig/phpcas/CAS.php');
-			// initialize phpCAS using SAML
-			phpCAS::client(SAML_VERSION_1_1,'sso-test.sch.gr',443,'');
-			// if logout
-			if (isset($_POST['logout']))
-			{
-				session_unset();
-				session_destroy(); 
-				phpCAS::logout();
-			}
+	// phpCAS simple client, import phpCAS lib (downloaded with composer)
+  require_once('vendor/jasig/phpcas/CAS.php');
+	//initialize phpCAS using SAML
+	phpCAS::client(SAML_VERSION_1_1,'sso-test.sch.gr',443,'');
+	// if logout
+	if (isset($_POST['logout']))
+	{
+		session_unset();
+		session_destroy(); 
+		phpCAS::logout();
+	}
 	
-			// no SSL validation for the CAS server, only for testing environments
-			phpCAS::setNoCasServerValidation();
-			// handle backend logout requests from CAS server
-			phpCAS::handleLogoutRequests(array('sso-test.sch.gr'));
-			// force CAS authentication
-			if (!phpCAS::checkAuthentication())
-			  phpCAS::forceAuthentication();
-			// at this step, the user has been authenticated by the CAS server and the user's login name can be read with phpCAS::getUser().
-			$_SESSION['loggedin'] = 1;
+	// no SSL validation for the CAS server, only for testing environments
+	phpCAS::setNoCasServerValidation();
+	// handle backend logout requests from CAS server
+	phpCAS::handleLogoutRequests(array('sso-test.sch.gr'));
+	// force CAS authentication
+	if (!phpCAS::checkAuthentication())
+	  phpCAS::forceAuthentication();
+	// at this step, the user has been authenticated by the CAS server and the user's login name can be read with phpCAS::getUser().
+	$_SESSION['loggedin'] = 1;
 }
 else 
 	$_SESSION['loggedin'] = 1;
 
-header('Content-Type: text/html; charset=utf-8');
 ?>
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <head>
-	<title> <?php echo iconv('Windows-1253', 'UTF-8', 'Προγράμματα Σχολικών Δραστηριοτήτων $prSxetos'); ?> </title>
+	<title> <?php echo 'Ξ ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„Ξ± Ξ£Ο‡ΞΏΞ»ΞΉΞΊΟΞ½ Ξ”ΟΞ±ΟƒΟ„Ξ·ΟΞΉΞΏΟ„Ξ®Ο„Ο‰Ξ½ $prSxetos'; ?> </title>
 </head>
 <body>
 <?php
 // declare and prepare phpgrid
 
-$dg = new C_DataGrid("SELECT id,sch1,titel,chk,timestamp FROM $prTable", "id", "$prTable");
+$dg = new C_DataGrid("SELECT pr.id,sc.name,pr.titel,pr.chk,pr.timestamp FROM $prTable pr JOIN $schTable sc ON pr.sch1 = sc.id", "id", "$prTable");
 
 $dg->set_locale('el');
 
-$dg -> set_caption(mb_convert_encoding("Προγράμματα Σχολικών Δραστηριοτήτων $prSxetos", "utf-8","iso-8859-7" ));
+$dg -> set_caption("Ξ ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„Ξ± Ξ£Ο‡ΞΏΞ»ΞΉΞΊΟΞ½ Ξ”ΟΞ±ΟƒΟ„Ξ·ΟΞΉΞΏΟ„Ξ®Ο„Ο‰Ξ½ $prSxetos");
 
 $dg ->set_col_property("id", array("name"=>"A/A", "width"=>15));
 $dg ->set_col_property("sch1", array("name"=>"A/A", "width"=>70));
@@ -56,11 +56,11 @@ $dg ->set_col_property("chk", array("name"=>"checked", "width"=>20));
 $dg ->set_col_property("timestamp", array("name"=>"timestamp", "width"=>45));
 //$dg ->set_col_property("agree", array("name"=>"done", "width"=>15));
 $dg ->set_col_title("id", "A/A");
-$dg ->set_col_title("sch1", mb_convert_encoding("Όνομα Σχολείου", "utf-8","iso-8859-7" ));
-$dg ->set_col_title("titel", mb_convert_encoding("Τίτλος προγράμματος", "utf-8","iso-8859-7" ));
-$dg ->set_col_title("chk", mb_convert_encoding("Έλεγχος", "utf-8","iso-8859-7" ));
-$dg ->set_col_title("timestamp", mb_convert_encoding("Τελ. Μεταβολή", "utf-8","iso-8859-7" ));
-//$dg ->set_col_title("agree", mb_convert_encoding("Δήλ.Ολοκλ.", "utf-8","iso-8859-7" ));
+$dg ->set_col_title("name", "ΞΞ½ΞΏΞΌΞ± Ξ£Ο‡ΞΏΞ»ΞµΞ―ΞΏΟ…");
+$dg ->set_col_title("titel", "Ξ¤Ξ―Ο„Ξ»ΞΏΟ‚ Ο€ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚");
+$dg ->set_col_title("chk", "ΞΞ»ΞµΞ³Ο‡ΞΏΟ‚");
+$dg ->set_col_title("timestamp", "Ξ¤ΞµΞ». ΞΞµΟ„Ξ±Ξ²ΞΏΞ»Ξ®");
+//$dg ->set_col_title("agree", "Ξ”Ξ®Ξ».ΞΞ»ΞΏΞΊΞ».");
 
 $dg -> enable_search(true);
 $dg -> set_dimension(1100, 700);
@@ -76,23 +76,30 @@ if (!$prDebug)
 	$uid = phpCAS::getUser();
 	$em1 = $uid . "@sch.gr";
 	$em2 = phpCAS::getAttribute('mail');
-	if (!strcmp($uid,'dipeira') || !strcmp($uid,'taypeira'))
+	if (!strcmp($uid,$prAdmin1) || !strcmp($uid,$prAdmin2))
 		$_SESSION['admin'] = 1;
 	$_SESSION['email1'] = $em1;
 	$_SESSION['email2'] = $em2;
+  $_SESSION['sch_name'] = $sch_name;
 }
 // fill for local testing
-else{
-	$sch_name = $prsch_name;
-	$uid = $pruid;
-	$em1 = $prem1;
-	$em2 = $prem2;
-  if (!strcmp($uid,'dipeira') || !strcmp($uid,'taypeira'))
-		$_SESSION['admin'] = 1;
+else {
+  $sch_name = $prsch_name;
+  $uid = $pruid;
+  $em1 = $prem1;
+  $em2 = $prem2;
+  if (!strcmp($uid,$prAdmin1) || !strcmp($uid,$prAdmin2)) {
+    $_SESSION['admin'] = 1;
+  } else {
+    $_SESSION['admin'] = 0;
+  }
+  $_SESSION['email1'] = $em1;
+  $_SESSION['email2'] = $em2;
+  $_SESSION['sch_name'] = $sch_name;
 }
 
 if (isset($sch_name))
-	echo "<h2>".iconv('Windows-1253', 'UTF-8', 'Σχολείο: ').$sch_name."</h2>";
+	echo "<h2>Ξ£Ο‡ΞΏΞ»ΞµΞ―ΞΏ: ".$sch_name."</h2>";
 	
 if (isset($em1) || isset($em2))
 {
@@ -103,9 +110,9 @@ if (isset($em1) || isset($em2))
 		$result = $conn->query($sql);
 		// if no results
 		if (!$result->num_rows) {
-			$outmsg = "<h2>Δεν υπάρχουν αποτελέσματα...</h2><p>Ελέγξτε ότι:<ol><li>Ο λογαριασμός με τον οποίο κάνατε είσοδο είναι λογαριασμός <strong>Σχολικής Μονάδας ΠΣΔ <small>(π.χ. για λήψη email, είσοδο στο survey κλπ)</small></strong> και <strong>ΟΧΙ</strong> προσωπικός ή του MySchool*.</li><li>Βεβαιωθείτε ότι η σχολική σας μονάδα έχει προγράμματα σχολικών δραστηριοτήτων.</li><li>Αν ελέγξατε τα παραπάνω και συνεχίζετε να έχετε πρόβλημα, επικοινωνήστε με το τμήμα Σχολικών Δραστηριοτήτων (2810-529318) ή το τμ. Μηχανογράφησης (2810-529301).</li></ol><br>
-			* Σε περίπτωση που είστε συνδεδεμένοι στο MySchool πρέπει να αποσυνδεθείτε και μετά να κάνετε είσοδο στο σύστημα αυτό.</p>";
-			echo '<div style="font-size:10pt;color:black;font-family:arial;">'.iconv('Windows-1253', 'UTF-8', $outmsg)."</div>";
+			$outmsg = "<h2>Ξ”ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞΏΟ…Ξ½ Ξ±Ο€ΞΏΟ„ΞµΞ»Ξ­ΟƒΞΌΞ±Ο„Ξ±...</h2><p>Ξ•Ξ»Ξ­Ξ³ΞΎΟ„Ξµ ΟΟ„ΞΉ:<ol><li>Ξ Ξ»ΞΏΞ³Ξ±ΟΞΉΞ±ΟƒΞΌΟΟ‚ ΞΌΞµ Ο„ΞΏΞ½ ΞΏΟ€ΞΏΞ―ΞΏ ΞΊΞ¬Ξ½Ξ±Ο„Ξµ ΞµΞ―ΟƒΞΏΞ΄ΞΏ ΞµΞ―Ξ½Ξ±ΞΉ Ξ»ΞΏΞ³Ξ±ΟΞΉΞ±ΟƒΞΌΟΟ‚ <strong>Ξ£Ο‡ΞΏΞ»ΞΉΞΊΞ®Ο‚ ΞΞΏΞ½Ξ¬Ξ΄Ξ±Ο‚ Ξ Ξ£Ξ” <small>(Ο€.Ο‡. Ξ³ΞΉΞ± Ξ»Ξ®ΟΞ· email, ΞµΞ―ΟƒΞΏΞ΄ΞΏ ΟƒΟ„ΞΏ survey ΞΊΞ»Ο€)</small></strong> ΞΊΞ±ΞΉ <strong>ΞΞ§Ξ™</strong> Ο€ΟΞΏΟƒΟ‰Ο€ΞΉΞΊΟΟ‚ Ξ® Ο„ΞΏΟ… MySchool*.</li><li>Ξ’ΞµΞ²Ξ±ΞΉΟ‰ΞΈΞµΞ―Ο„Ξµ ΟΟ„ΞΉ Ξ· ΟƒΟ‡ΞΏΞ»ΞΉΞΊΞ® ΟƒΞ±Ο‚ ΞΌΞΏΞ½Ξ¬Ξ΄Ξ± Ξ­Ο‡ΞµΞΉ Ο€ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„Ξ± ΟƒΟ‡ΞΏΞ»ΞΉΞΊΟΞ½ Ξ΄ΟΞ±ΟƒΟ„Ξ·ΟΞΉΞΏΟ„Ξ®Ο„Ο‰Ξ½.</li><li>Ξ‘Ξ½ ΞµΞ»Ξ­Ξ³ΞΎΞ±Ο„Ξµ Ο„Ξ± Ο€Ξ±ΟΞ±Ο€Ξ¬Ξ½Ο‰ ΞΊΞ±ΞΉ ΟƒΟ…Ξ½ΞµΟ‡Ξ―Ξ¶ΞµΟ„Ξµ Ξ½Ξ± Ξ­Ο‡ΞµΟ„Ξµ Ο€ΟΟΞ²Ξ»Ξ·ΞΌΞ±, ΞµΟ€ΞΉΞΊΞΏΞΉΞ½Ο‰Ξ½Ξ®ΟƒΟ„Ξµ ΞΌΞµ $contactInfo</li></ol><br>
+			* Ξ£Ξµ Ο€ΞµΟΞ―Ο€Ο„Ο‰ΟƒΞ· Ο€ΞΏΟ… ΞµΞ―ΟƒΟ„Ξµ ΟƒΟ…Ξ½Ξ΄ΞµΞ΄ΞµΞΌΞ­Ξ½ΞΏΞΉ ΟƒΟ„ΞΏ MySchool Ο€ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± Ξ±Ο€ΞΏΟƒΟ…Ξ½Ξ΄ΞµΞΈΞµΞ―Ο„Ξµ ΞΊΞ±ΞΉ ΞΌΞµΟ„Ξ¬ Ξ½Ξ± ΞΊΞ¬Ξ½ΞµΟ„Ξµ ΞµΞ―ΟƒΞΏΞ΄ΞΏ ΟƒΟ„ΞΏ ΟƒΟΟƒΟ„Ξ·ΞΌΞ± Ξ±Ο…Ο„Ο.</p>";
+			echo '<div style="font-size:10pt;color:black;font-family:arial;">$outmsg</div>';
 		}
 		// else display phpgrid only for selected school records
 		else
@@ -115,9 +122,13 @@ if (isset($em1) || isset($em2))
 			//$dg -> set_col_hidden("agree");
 			$dg -> set_dimension(1024, 700);
 			$dg -> display();
+      
+      // store sch id
+      $row = mysqli_fetch_assoc($result);
+      $_SESSION['sch_id'] = $row['sch1'];
 		}
 		$conn->close();
-		/*$out = iconv('Windows-1253', 'UTF-8', 'H υποβολή προγραμμάτων έχει τελειώσει. Ευχαριστούμε...');
+		/*$out = 'H Ο…Ο€ΞΏΞ²ΞΏΞ»Ξ® Ο€ΟΞΏΞ³ΟΞ±ΞΌΞΌΞ¬Ο„Ο‰Ξ½ Ξ­Ο‡ΞµΞΉ Ο„ΞµΞ»ΞµΞΉΟΟƒΞµΞΉ. Ξ•Ο…Ο‡Ξ±ΟΞΉΟƒΟ„ΞΏΟΞΌΞµ...';
 		die($out);*/
 	}
 	// if admin, display all records
@@ -126,7 +137,7 @@ if (isset($em1) || isset($em2))
   }
 }
 else
-	die('Authentication Error...');
+	die('Ξ£Ο†Ξ¬Ξ»ΞΌΞ± ΞµΟ€Ξ±Ξ»Ξ®ΞΈΞµΟ…ΟƒΞ·Ο‚ ΟƒΟ„ΞΏΞΉΟ‡ΞµΞ―Ο‰Ξ½ Ο‡ΟΞ®ΟƒΟ„Ξ· (Authentication Error)');
 
 // write to log...
 $fname = "login_log.txt";
@@ -134,14 +145,23 @@ $fh = fopen($fname, 'a');
 $data = $uid . "\t" . date('d-m-Y, H:i:s') . "\t" . $_SERVER['HTTP_USER_AGENT'] ."\n";
 fwrite($fh, $data);
 fclose($fh);
-	
-echo $_SESSION['admin'] ? '<a href="export.php">'.iconv('Windows-1253', 'UTF-8', 'Εξαγωγή δεδομένων').'</a>' : '';
+
+// export data link	
+echo $_SESSION['admin'] ? '<a href="export.php">'.'Ξ•ΞΎΞ±Ξ³Ο‰Ξ³Ξ® Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½'.'</a>' : '';
+echo "<br><br>";
+// add new programme button
+if ($canAdd){
+  echo "<form action='prog.php' method='GET' target='_blank'>";
+  echo "<input type='hidden' name='add' value='1' />";
+  echo "<input type='submit' name='logout' value='Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ξ ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚'>";
+  echo "</form>";
+}
 //logout button
-$btnval = iconv ('Windows-1253', 'UTF-8', 'Έξοδος');
 echo "<form action='' method='POST'>";
-echo "<input type='submit' name='logout' value='$btnval'>";
+echo "<input type='submit' name='logout' value='ΞΞΎΞΏΞ΄ΞΏΟ‚'>";
 echo "</form>";
-$author = iconv ('Windows-1253', 'UTF-8', '(c) 2015, Βαγγέλης Ζαχαριουδάκης, Τμ.Μηχανογράφησης, Δ/νση Π.Ε. Ηρακλείου.');
+
+$author = '(c) 2015-16, Ξ’Ξ±Ξ³Ξ³Ξ­Ξ»Ξ·Ο‚ Ξ–Ξ±Ο‡Ξ±ΟΞΉΞΏΟ…Ξ΄Ξ¬ΞΊΞ·Ο‚, Ξ¤ΞΌ.ΞΞ·Ο‡Ξ±Ξ½ΞΏΞ³ΟΞ¬Ο†Ξ·ΟƒΞ·Ο‚, Ξ”/Ξ½ΟƒΞ· Ξ .Ξ•. Ξ—ΟΞ±ΞΊΞ»ΞµΞ―ΞΏΟ….';
 echo '<div style="font-size:9pt;color:black;font-family:arial;">'.$author.'</div>';
 
 ?>

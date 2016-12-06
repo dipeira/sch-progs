@@ -11,17 +11,20 @@
 	});
 });
 </script>
-<title><?php echo iconv('Windows-1253', 'UTF-8', 'Σελίδα Προγράμματος'); ?></title>
+<title><?php echo 'Ξ£ΞµΞ»Ξ―Ξ΄Ξ± Ξ ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚'; ?></title>
 </head>
 <body>
 <div id="content">
 <?php
+header('Content-Type: text/html; charset=utf-8');
 
-// Displays program record as a form (via Formitable), for editing and exporting to HTML
+// Displays program record as a form (via Formitable), for adding, editing and exporting to HTML
 
 require_once('conf.php');
 session_start();
 $admin = $_SESSION['admin'];
+if (!$_SESSION['loggedin'])
+  die('Error... Not logged-in!');
 
 //include class, create new Formitable, set primary key field name 
 include("include/Formitable.class.php");
@@ -36,15 +39,20 @@ $newForm = new Formitable($myconn,$prDbname,$prTable);
 
 $newForm->setPrimaryKey("id"); 
 
-// if form has been submitted, call Formitable submit method
+// custom messages
+$newForm->msg_insertSuccess = $msg_insertSuccess;
+$newForm->msg_insertFail = $msg_insertFail;
+$newForm->msg_updateSuccess = $msg_updateSuccess;
+$newForm->msg_updateFail = $msg_updateFail;
+
+// if form has been submitted, call Formitable submit method to save to db
 if( isset($_POST['submit']) ) 
 {
-	// if not admin, skip (don't update) the following fields
+	// if not admin, skip (don't update) the following fields (set @conf.php)
 	if (!$admin)
 	{
-		//$skipped = array('emails1','schnip','dimo','sch1','sch2');
-    $skipped = array('emails1','schnip','dimo','sch1','sch2','emails2','titel','categ','sur1','sur2','sur3');
-		$newForm->skipFields($skipped);
+    if ($skippedFields)
+      $newForm->skipFields($skippedFields);
 	}
 	$newForm->submitForm(); 
 }
@@ -52,13 +60,17 @@ if( isset($_POST['submit']) )
 //otherwise continue with form customization 
 else { 
 	//retrieve a record for update if GET var is set 
-	if ( isset($_GET['id']) ) 
-			$newForm->getRecord($_GET['id']);
-		else{
-			die ("Error...(no get var)");
+	if ( isset($_GET['id']) ) {
+		$newForm->getRecord($_GET['id']);
+  }
+  else if (isset($_GET['add'])) {
+    // do nothing
+  }
+	else {
+		die ("Ξ£Ο†Ξ¬Ξ»ΞΌΞ±...(no get var)");
 	}
-	// check if school or admin, else die
-	if (!$admin)
+	// if editing, check if school or admin, else die
+	if (!$admin && !isset($_GET['add']))
 	{
 		$email = $newForm->getFieldValue('emails1');
 		if (!strcmp($email,$_SESSION['email1']) || !strcmp($email,$_SESSION['email2']))
@@ -66,23 +78,51 @@ else {
 		// not a school. Exit...
 		else
 		{
-			$errormsg = iconv('Windows-1253', 'UTF-8', '<h2>Λάθος. Δεν έχετε δικαίωμα να δείτε αυτό το πρόγραμμα...</h2>');
+			$errormsg = '<h2>Ξ›Ξ¬ΞΈΞΏΟ‚. Ξ”ΞµΞ½ Ξ­Ο‡ΞµΟ„Ξµ Ξ΄ΞΉΞΊΞ±Ξ―Ο‰ΞΌΞ± Ξ½Ξ± Ξ΄ΞµΞ―Ο„Ξµ Ξ±Ο…Ο„Ο Ο„ΞΏ Ο€ΟΟΞ³ΟΞ±ΞΌΞΌΞ±...</h2>';
 			die ($errormsg);
 		}
 	}
-	
-	$title = $newForm->getFieldValue('titel');
-	$updated = $newForm->getFieldValue('timestamp');
-	echo iconv('Windows-1253','UTF-8',"<h1><i>Πρόγραμμα:</i> "). $title . "</h1>";
+	// if editing, set header
+  if ( isset($_GET['id']) ) {
+    $title = $newForm->getFieldValue('titel');
+    $updated = $newForm->getFieldValue('timestamp');
+    echo "<h1><i>Ξ ΟΟΞ³ΟΞ±ΞΌΞΌΞ±:</i> ". $title . "</h1>";
+  }
 	  
 	// hide fields from users
-	$hidden = array('id','timestamp','vev');
-	$newForm->hideFields($hidden); 
+	$newForm->hideFields($hiddenFields); 
 	
-	// force types
-	//$newForm->forceType('visits','select');
-	//$newForm->forceType('duration','select');
-    
+  // if new record
+  if (isset($_GET['add'])){
+    // check if adding is enabled
+    if (!$canAdd){
+      die('Ξ£Ο†Ξ¬Ξ»ΞΌΞ±... Ξ— Ο€ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ο€ΟΞΏΞ³ΟΞ±ΞΌΞΌΞ¬Ο„Ο‰Ξ½ ΞµΞ―Ξ½Ξ±ΞΉ Ξ±Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ·.');
+    }
+    // if not admin
+    if (!$admin) {
+      $whereClause = "id = ".$_SESSION['sch_id'];
+      $newForm->normalizedField("sch1","schools","id","name","type ASC", $whereClause);
+      $newForm->setDefaultValue("emails1",$_SESSION['email1']);
+    } else {
+      $newForm->normalizedField("sch1","schools","id","name","type ASC");
+    }
+    $newForm->normalizedField("sch2","schools","id","name","type ASC");
+  }
+  // if editing
+  else {
+    $newForm->normalizedField("sch1","schools","id","name","type ASC");
+    $newForm->normalizedField("sch2","schools","id","name","type ASC");
+  }
+	// force types (display as select instead of radio)
+  $newForm->forceTypes(
+      array("his1","his2","his3","qua1","qua2","qua3","categ","arxeio","prsnt","cha"),
+      array("select","select","select","select","select","select","select","select","select","select")
+  );
+  // form validation - TODO: NOT WORKING!!!
+  //$newForm->registerValidation("required",".+","Ξ‘Ο€Ξ±ΞΉΟ„ΞΏΟΞΌΞµΞ½ΞΏ Ο€ΞµΞ΄Ξ―ΞΏ"); 
+  //$newForm->validateField("princ1","required"); 
+  //$newForm->feedback="both";
+  
     //set custom field labels 
 	 $rows = array (
 	 'emails1', 'schnip', 'dimo', 'sch1', 'princ1', 'praxi', 'sch2','princ2','emails2',
@@ -95,24 +135,17 @@ else {
 	 'Nr' ,'cha' ,'grade' ,'notes','chk','vev'
 	 );
 	 
-	 $labels = array ('email Σχολείου','Τύπος Μονάδας','Δήμος','Σχολική Μονάδα','Ονοματεπώνυμο Διευθυντή/ντριας- Προϊσταμένου/νης','Πράξη ανάθεσης', 'Συστεγαζόμενη Σχολική Μονάδα', 'Δ/ντής/ντρια Συστεγαζόμενης', 'email Συστεγαζόμενης',
-	 'Τίτλος προγράμματος','Υπότιτλος-Υποθέματα','Κατηγορία προγράμματος','Θεματολογία','Παιδαγωγικοί στόχοι','Μεθοδολογία Υλοποίησης-Συνεργασίες','Πεδία σύνδεσης με τα προγράμματα σπουδών των αντίστοιχων γνωστικών αντικειμένων',
-	 'Διάρκεια προγράμματος (μήνες)','1ος Μήνας','2ος Μήνας','3ος Μήνας','4ος Μήνας','5ος Μήνας','Αριθμός επισκέψεων','1ος φορέας επίσκεψης' ,	'2ος φορέας επίσκεψης',
-   'Ημέρα, ώρα και τόπος συνάντησης ομάδας', 'Ύπαρξη αρχείου Σχολικών Δραστηριοτήτων στο Σχολείο','Δράσεις','Πρόθεση παρουσίασης του προγράμματος στη Γιορτή Μαθητικής Δημιουργίας 2016',
-	 'Όνοματεπώνυμο 1ου εκπ/κού','email 1ου εκπ/κού','Κινητό τηλέφωνο 1ου εκπ/κού','Ειδικότητα 1ου εκπ/κού','Υλοποίηση προγραμμάτων 1ου εκπ/κού στο παρελθόν','Επιμόρφωση 1ου εκπ/κού',
-	 'Όνοματεπώνυμο 2ου εκπ/κού','email 2ου εκπ/κού','Κινητό τηλέφωνο 2ου εκπ/κού','Ειδικότητα 2ου εκπ/κού','Υλοποίηση προγραμμάτων 2ου εκπ/κού στο παρελθόν','Επιμόρφωση 2ου εκπ/κού',
-	 'Όνοματεπώνυμο 3ου εκπ/κού','email 3ου εκπ/κού','Κινητό τηλέφωνο 3ου εκπ/κού','Ειδικότητα 3ου εκπ/κού','Υλοποίηση προγραμμάτων 3ου εκπ/κού στο παρελθόν','Επιμόρφωση 3ου εκπ/κού',
-	 'Αριθμός Μαθητών','Χαρακτηριστικά ομάδας','Τάξεις','Τυχόν παρατηρήσεις-επισημάνσεις',
-	 'Βεβαιώνεται ότι ο/η δ/ντής/τρια ή προϊσταμένος/νη της σχολικής μονάδας έλεγξε το παρόν σχέδιο προγράμματος σχολικών δραστηριοτήτων, έκανε απαραίτητες τυχόν διορθώσεις και βεβαιώνει ότι τα στοιχεία που αναφέρονται στο παρόν σχέδιο προγράμματος είναι σωστά.', 'Ο/Η  δ/ντής/τρια ή προϊσταμένος/νη βεβαιώνει ότι το συγκεκριμένο σχέδιο προγράμματος σχολικών δραστηριοτήτων ολοκληρώθηκε επιτυχώς και τα αποτελέσματα του προγράμματος είναι διαθέσιμα στο σχολική μονάδα.'
+	 $labels = array ('email Ξ£Ο‡ΞΏΞ»ΞµΞ―ΞΏΟ…','Ξ¤ΟΟ€ΞΏΟ‚ ΞΞΏΞ½Ξ¬Ξ΄Ξ±Ο‚','Ξ”Ξ®ΞΌΞΏΟ‚','Ξ£Ο‡ΞΏΞ»ΞΉΞΊΞ® ΞΞΏΞ½Ξ¬Ξ΄Ξ±','ΞΞ½ΞΏΞΌΞ±Ο„ΞµΟ€ΟΞ½Ο…ΞΌΞΏ Ξ”ΞΉΞµΟ…ΞΈΟ…Ξ½Ο„Ξ®/Ξ½Ο„ΟΞΉΞ±Ο‚- Ξ ΟΞΏΟΟƒΟ„Ξ±ΞΌΞ­Ξ½ΞΏΟ…/Ξ½Ξ·Ο‚','Ξ ΟΞ¬ΞΎΞ· Ξ±Ξ½Ξ¬ΞΈΞµΟƒΞ·Ο‚', 'Ξ£Ο…ΟƒΟ„ΞµΞ³Ξ±Ξ¶ΟΞΌΞµΞ½Ξ· Ξ£Ο‡ΞΏΞ»ΞΉΞΊΞ® ΞΞΏΞ½Ξ¬Ξ΄Ξ±', 'Ξ”/Ξ½Ο„Ξ®Ο‚/Ξ½Ο„ΟΞΉΞ± Ξ£Ο…ΟƒΟ„ΞµΞ³Ξ±Ξ¶ΟΞΌΞµΞ½Ξ·Ο‚', 'email Ξ£Ο…ΟƒΟ„ΞµΞ³Ξ±Ξ¶ΟΞΌΞµΞ½Ξ·Ο‚',
+	 'Ξ¤Ξ―Ο„Ξ»ΞΏΟ‚ Ο€ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚','Ξ¥Ο€ΟΟ„ΞΉΟ„Ξ»ΞΏΟ‚-Ξ¥Ο€ΞΏΞΈΞ­ΞΌΞ±Ο„Ξ±','ΞΞ±Ο„Ξ·Ξ³ΞΏΟΞ―Ξ± Ο€ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚','ΞΞµΞΌΞ±Ο„ΞΏΞ»ΞΏΞ³Ξ―Ξ±','Ξ Ξ±ΞΉΞ΄Ξ±Ξ³Ο‰Ξ³ΞΉΞΊΞΏΞ― ΟƒΟ„ΟΟ‡ΞΏΞΉ','ΞΞµΞΈΞΏΞ΄ΞΏΞ»ΞΏΞ³Ξ―Ξ± Ξ¥Ξ»ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ·Ο‚-Ξ£Ο…Ξ½ΞµΟΞ³Ξ±ΟƒΞ―ΞµΟ‚','Ξ ΞµΞ΄Ξ―Ξ± ΟƒΟΞ½Ξ΄ΞµΟƒΞ·Ο‚ ΞΌΞµ Ο„Ξ± Ο€ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„Ξ± ΟƒΟ€ΞΏΟ…Ξ΄ΟΞ½ Ο„Ο‰Ξ½ Ξ±Ξ½Ο„Ξ―ΟƒΟ„ΞΏΞΉΟ‡Ο‰Ξ½ Ξ³Ξ½Ο‰ΟƒΟ„ΞΉΞΊΟΞ½ Ξ±Ξ½Ο„ΞΉΞΊΞµΞΉΞΌΞ­Ξ½Ο‰Ξ½',
+	 'Ξ”ΞΉΞ¬ΟΞΊΞµΞΉΞ± Ο€ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚ (ΞΌΞ®Ξ½ΞµΟ‚)','1ΞΏΟ‚ ΞΞ®Ξ½Ξ±Ο‚','2ΞΏΟ‚ ΞΞ®Ξ½Ξ±Ο‚','3ΞΏΟ‚ ΞΞ®Ξ½Ξ±Ο‚','4ΞΏΟ‚ ΞΞ®Ξ½Ξ±Ο‚','5ΞΏΟ‚ ΞΞ®Ξ½Ξ±Ο‚','Ξ‘ΟΞΉΞΈΞΌΟΟ‚ ΞµΟ€ΞΉΟƒΞΊΞ­ΟΞµΟ‰Ξ½','1ΞΏΟ‚ Ο†ΞΏΟΞ­Ξ±Ο‚ ΞµΟ€Ξ―ΟƒΞΊΞµΟΞ·Ο‚' ,	'2ΞΏΟ‚ Ο†ΞΏΟΞ­Ξ±Ο‚ ΞµΟ€Ξ―ΟƒΞΊΞµΟΞ·Ο‚',
+   'Ξ—ΞΌΞ­ΟΞ±, ΟΟΞ± ΞΊΞ±ΞΉ Ο„ΟΟ€ΞΏΟ‚ ΟƒΟ…Ξ½Ξ¬Ξ½Ο„Ξ·ΟƒΞ·Ο‚ ΞΏΞΌΞ¬Ξ΄Ξ±Ο‚', 'ΞΟ€Ξ±ΟΞΎΞ· Ξ±ΟΟ‡ΞµΞ―ΞΏΟ… Ξ£Ο‡ΞΏΞ»ΞΉΞΊΟΞ½ Ξ”ΟΞ±ΟƒΟ„Ξ·ΟΞΉΞΏΟ„Ξ®Ο„Ο‰Ξ½ ΟƒΟ„ΞΏ Ξ£Ο‡ΞΏΞ»ΞµΞ―ΞΏ','Ξ”ΟΞ¬ΟƒΞµΞΉΟ‚','Ξ ΟΟΞΈΞµΟƒΞ· Ο€Ξ±ΟΞΏΟ…ΟƒΞ―Ξ±ΟƒΞ·Ο‚ Ο„ΞΏΟ… Ο€ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚ ΟƒΟ„Ξ· Ξ“ΞΉΞΏΟΟ„Ξ® ΞΞ±ΞΈΞ·Ο„ΞΉΞΊΞ®Ο‚ Ξ”Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ 2016',
+	 'ΞΞ½ΞΏΞΌΞ±Ο„ΞµΟ€ΟΞ½Ο…ΞΌΞΏ 1ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ','email 1ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ','ΞΞΉΞ½Ξ·Ο„Ο Ο„Ξ·Ξ»Ξ­Ο†Ο‰Ξ½ΞΏ 1ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ','Ξ•ΞΉΞ΄ΞΉΞΊΟΟ„Ξ·Ο„Ξ± 1ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ','Ξ¥Ξ»ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ο€ΟΞΏΞ³ΟΞ±ΞΌΞΌΞ¬Ο„Ο‰Ξ½ 1ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ ΟƒΟ„ΞΏ Ο€Ξ±ΟΞµΞ»ΞΈΟΞ½','Ξ•Ο€ΞΉΞΌΟΟΟ†Ο‰ΟƒΞ· 1ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ',
+	 'ΞΞ½ΞΏΞΌΞ±Ο„ΞµΟ€ΟΞ½Ο…ΞΌΞΏ 2ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ','email 2ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ','ΞΞΉΞ½Ξ·Ο„Ο Ο„Ξ·Ξ»Ξ­Ο†Ο‰Ξ½ΞΏ 2ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ','Ξ•ΞΉΞ΄ΞΉΞΊΟΟ„Ξ·Ο„Ξ± 2ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ','Ξ¥Ξ»ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ο€ΟΞΏΞ³ΟΞ±ΞΌΞΌΞ¬Ο„Ο‰Ξ½ 2ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ ΟƒΟ„ΞΏ Ο€Ξ±ΟΞµΞ»ΞΈΟΞ½','Ξ•Ο€ΞΉΞΌΟΟΟ†Ο‰ΟƒΞ· 2ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ',
+	 'ΞΞ½ΞΏΞΌΞ±Ο„ΞµΟ€ΟΞ½Ο…ΞΌΞΏ 3ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ','email 3ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ','ΞΞΉΞ½Ξ·Ο„Ο Ο„Ξ·Ξ»Ξ­Ο†Ο‰Ξ½ΞΏ 3ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ','Ξ•ΞΉΞ΄ΞΉΞΊΟΟ„Ξ·Ο„Ξ± 3ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ','Ξ¥Ξ»ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ο€ΟΞΏΞ³ΟΞ±ΞΌΞΌΞ¬Ο„Ο‰Ξ½ 3ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ ΟƒΟ„ΞΏ Ο€Ξ±ΟΞµΞ»ΞΈΟΞ½','Ξ•Ο€ΞΉΞΌΟΟΟ†Ο‰ΟƒΞ· 3ΞΏΟ… ΞµΞΊΟ€/ΞΊΞΏΟ',
+	 'Ξ‘ΟΞΉΞΈΞΌΟΟ‚ ΞΞ±ΞΈΞ·Ο„ΟΞ½','Ξ§Ξ±ΟΞ±ΞΊΟ„Ξ·ΟΞΉΟƒΟ„ΞΉΞΊΞ¬ ΞΏΞΌΞ¬Ξ΄Ξ±Ο‚','Ξ¤Ξ¬ΞΎΞµΞΉΟ‚','Ξ¤Ο…Ο‡ΟΞ½ Ο€Ξ±ΟΞ±Ο„Ξ·ΟΞ®ΟƒΞµΞΉΟ‚-ΞµΟ€ΞΉΟƒΞ·ΞΌΞ¬Ξ½ΟƒΞµΞΉΟ‚',
+	 'Ξ’ΞµΞ²Ξ±ΞΉΟΞ½ΞµΟ„Ξ±ΞΉ ΟΟ„ΞΉ ΞΏ/Ξ· Ξ΄/Ξ½Ο„Ξ®Ο‚/Ο„ΟΞΉΞ± Ξ® Ο€ΟΞΏΟΟƒΟ„Ξ±ΞΌΞ­Ξ½ΞΏΟ‚/Ξ½Ξ· Ο„Ξ·Ο‚ ΟƒΟ‡ΞΏΞ»ΞΉΞΊΞ®Ο‚ ΞΌΞΏΞ½Ξ¬Ξ΄Ξ±Ο‚ Ξ­Ξ»ΞµΞ³ΞΎΞµ Ο„ΞΏ Ο€Ξ±ΟΟΞ½ ΟƒΟ‡Ξ­Ξ΄ΞΉΞΏ Ο€ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚ ΟƒΟ‡ΞΏΞ»ΞΉΞΊΟΞ½ Ξ΄ΟΞ±ΟƒΟ„Ξ·ΟΞΉΞΏΟ„Ξ®Ο„Ο‰Ξ½, Ξ­ΞΊΞ±Ξ½Ξµ Ξ±Ο€Ξ±ΟΞ±Ξ―Ο„Ξ·Ο„ΞµΟ‚ Ο„Ο…Ο‡ΟΞ½ Ξ΄ΞΉΞΏΟΞΈΟΟƒΞµΞΉΟ‚ ΞΊΞ±ΞΉ Ξ²ΞµΞ²Ξ±ΞΉΟΞ½ΞµΞΉ ΟΟ„ΞΉ Ο„Ξ± ΟƒΟ„ΞΏΞΉΟ‡ΞµΞ―Ξ± Ο€ΞΏΟ… Ξ±Ξ½Ξ±Ο†Ξ­ΟΞΏΞ½Ο„Ξ±ΞΉ ΟƒΟ„ΞΏ Ο€Ξ±ΟΟΞ½ ΟƒΟ‡Ξ­Ξ΄ΞΉΞΏ Ο€ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚ ΞµΞ―Ξ½Ξ±ΞΉ ΟƒΟ‰ΟƒΟ„Ξ¬.', 'Ξ/Ξ—  Ξ΄/Ξ½Ο„Ξ®Ο‚/Ο„ΟΞΉΞ± Ξ® Ο€ΟΞΏΟΟƒΟ„Ξ±ΞΌΞ­Ξ½ΞΏΟ‚/Ξ½Ξ· Ξ²ΞµΞ²Ξ±ΞΉΟΞ½ΞµΞΉ ΟΟ„ΞΉ Ο„ΞΏ ΟƒΟ…Ξ³ΞΊΞµΞΊΟΞΉΞΌΞ­Ξ½ΞΏ ΟƒΟ‡Ξ­Ξ΄ΞΉΞΏ Ο€ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚ ΟƒΟ‡ΞΏΞ»ΞΉΞΊΟΞ½ Ξ΄ΟΞ±ΟƒΟ„Ξ·ΟΞΉΞΏΟ„Ξ®Ο„Ο‰Ξ½ ΞΏΞ»ΞΏΞΊΞ»Ξ·ΟΟΞΈΞ·ΞΊΞµ ΞµΟ€ΞΉΟ„Ο…Ο‡ΟΟ‚ ΞΊΞ±ΞΉ Ο„Ξ± Ξ±Ο€ΞΏΟ„ΞµΞ»Ξ­ΟƒΞΌΞ±Ο„Ξ± Ο„ΞΏΟ… Ο€ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚ ΞµΞ―Ξ½Ξ±ΞΉ Ξ΄ΞΉΞ±ΞΈΞ­ΟƒΞΉΞΌΞ± ΟƒΟ„ΞΏ ΟƒΟ‡ΞΏΞ»ΞΉΞΊΞ® ΞΌΞΏΞ½Ξ¬Ξ΄Ξ±.'
    );
-	// convert greek labels to utf8
-	array_walk(
-		$labels,
-		function (&$entry) {
-			$entry = iconv('Windows-1253', 'UTF-8', $entry);
-		}
-	);
-	 
+	
 	 $newForm->labelFields( $rows, $labels ); 
 
 	//encryption (not working)
@@ -120,21 +153,22 @@ else {
 	//$newForm->setEncryptionKey($key);
 	
 	//output form 
-	$newForm->printForm(array(),array(iconv('Windows-1253', 'UTF-8', 'Υποβολή'),'','Reset Form',false,true)); 
+  // TODO: Use printField instead of printForm, in case validation works
+	$newForm->printForm(array(),array('Ξ¥Ο€ΞΏΞ²ΞΏΞ»Ξ®','','Reset Form',false,true)); 
 	
-	// display print button
-	$printText = iconv('Windows-1253', 'UTF-8', 'Εκτύπωση');
-	echo "<input type=\"button\" onclick=\"window.open('exp.php?id=".$newForm->getFieldValue('id')."');\" value=\"".$printText."\" />";
+	// if edit, display print button
+  if ( isset($_GET['id']) ) {
+    $printText = 'Ξ•ΞΊΟ„ΟΟ€Ο‰ΟƒΞ·';
+    echo "<input type=\"button\" onclick=\"window.open('exp.php?id=".$newForm->getFieldValue('id')."');\" value=\"".$printText."\" />";
+    echo "<h4>Ξ£Ξ—ΞΞ•Ξ™Ξ©Ξ£Ξ•Ξ™Ξ£:<br>1. Ξ“ΞΉΞ± Ο„Ξ·Ξ½ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· ΞΏΟ€ΞΏΞΉΞ±ΟƒΞ΄Ξ®Ο€ΞΏΟ„Ξµ Ξ±Ξ»Ξ»Ξ±Ξ³Ξ®Ο‚ Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ 'Ξ¥Ο€ΞΏΞ²ΞΏΞ»Ξ®'.<br>2. Ξ¤Ξ± Ο€ΞµΞ΄Ξ―Ξ±: Ξ£Ο‡ΞΏΞ»ΞΉΞΊΞ® ΞΌΞΏΞ½Ξ¬Ξ΄Ξ±, Ξ¤Ξ―Ο„Ξ»ΞΏΟ‚ Ο€ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚, ΞΞ½ΞΏΞΌΞ±-Ξ•Ο€ΟΞ½Ο…ΞΌΞΏ-ΞΞ»Ξ¬Ξ΄ΞΏΟ‚ ΞµΞΊΟ€/ΞΊΟΞ½ Ξ”Ξ• ΞΌΞµΟ„Ξ±Ξ²Ξ¬Ξ»Ξ»ΞΏΞ½Ο„Ξ±ΞΉ.<br>Ξ“ΞΉΞ± Ο„Ξ· ΞΌΞµΟ„Ξ±Ξ²ΞΏΞ»Ξ® Ο„ΞΏΟ…Ο‚ ΞµΟ€ΞΉΞΊΞΏΞΉΞ½Ο‰Ξ½Ξ®ΟƒΟ„Ξµ ΞΌΞµ $contactInfo</h4><br>";
+    //$shm = '<h4>Ξ£Ξ—ΞΞ•Ξ™Ξ©Ξ£Ξ•Ξ™Ξ£:<br>Ξ“ΞΉΞ± Ο„Ξ·Ξ½ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· ΞΏΟ€ΞΏΞΉΞ±ΟƒΞ΄Ξ®Ο€ΞΏΟ„Ξµ Ξ±Ξ»Ξ»Ξ±Ξ³Ξ®Ο‚ Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ \'Ξ¥Ο€ΞΏΞ²ΞΏΞ»Ξ®\'.</h4><br>';
 
-	$shm = '<h4>ΣΗΜΕΙΩΣΕΙΣ:<br>1. Για την αποθήκευση οποιασδήποτε αλλαγής πατήστε \'Υποβολή\'.<br>2. Τα πεδία: Σχολική μονάδα, Τίτλος προγράμματος, Όνομα-Επώνυμο-Κλάδος εκπ/κών ΔΕ μεταβάλλονται.<br>Για τη μεταβολή τους επικοινωνήστε με το τμήμα Σχολικών Δραστηριοτήτων, τηλ. 2810529318, email: tay@dipe.ira.sch.gr</h4><br>';
-	//$shm = '<h4>ΣΗΜΕΙΩΣΕΙΣ:<br>Για την αποθήκευση οποιασδήποτε αλλαγής πατήστε \'Υποβολή\'.</h4><br>';
-	echo iconv('Windows-1253', 'UTF-8', $shm);
-	// display record timestamp
-	if ($updated>0)
-		echo "<small>".iconv('Windows-1253', 'UTF-8', 'Τελευταία μεταβολή: ').date('d/m/Y, H:i:s',strtotime($updated))."</small>";
+    // display record timestamp
+    if ($updated>0)
+      echo "<small>Ξ¤ΞµΞ»ΞµΟ…Ο„Ξ±Ξ―Ξ± ΞΌΞµΟ„Ξ±Ξ²ΞΏΞ»Ξ®: ".date('d/m/Y, H:i:s',strtotime($updated))."</small>";
+  }
 }
 ?>
-<small></small>
 </div>
 </body>
 </html>
