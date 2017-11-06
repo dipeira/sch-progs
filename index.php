@@ -44,7 +44,9 @@ else
 <?php
 // declare and prepare phpgrid
 
-$dg = new C_DataGrid("SELECT pr.id,sc.name,pr.titel,pr.chk,pr.timestamp FROM $prTable pr JOIN $schTable sc ON pr.sch1 = sc.id", "id", "$prTable");
+$dg = $printVev ? 
+	new C_DataGrid("SELECT pr.id,sc.name,pr.titel,pr.chk,pr.timestamp,pr.vev FROM $prTable pr JOIN $schTable sc ON pr.sch1 = sc.id", "id", "$prTable") :
+	new C_DataGrid("SELECT pr.id,sc.name,pr.titel,pr.chk,pr.timestamp FROM $prTable pr JOIN $schTable sc ON pr.sch1 = sc.id", "id", "$prTable");
 
 $dg->set_locale('el');
 
@@ -54,12 +56,16 @@ $dg ->set_col_property("id", array("name"=>"A/A", "width"=>15));
 $dg ->set_col_property("sch1", array("name"=>"A/A", "width"=>70));
 $dg ->set_col_property("chk", array("name"=>"checked", "width"=>20));
 $dg ->set_col_property("timestamp", array("name"=>"timestamp", "width"=>45));
+if ($printVev)
+	$dg ->set_col_property("vev", array("name"=>"vev", "width"=>15));
 //$dg ->set_col_property("agree", array("name"=>"done", "width"=>15));
 $dg ->set_col_title("id", "A/A");
 $dg ->set_col_title("name", "Όνομα Σχολείου");
 $dg ->set_col_title("titel", "Τίτλος προγράμματος");
 $dg ->set_col_title("chk", "Έλεγχος");
 $dg ->set_col_title("timestamp", "Τελ. Μεταβολή");
+if ($printVev)
+	$dg ->set_col_title("vev", "Βεβαίωση");
 //$dg ->set_col_title("agree", "Δήλ.Ολοκλ.");
 
 $dg -> enable_search(true);
@@ -67,6 +73,8 @@ $dg -> set_dimension(1100, 700);
 $dg -> set_pagesize(30);
 $dg -> set_col_dynalink("id", "prog.php", "id");
 $dg -> set_col_dynalink("titel", "prog.php", "id");
+if ($printVev)
+	$dg -> set_col_dynalink("vev", "vev.php", "id");
 
 // get data from CAS server
 $_SESSION['admin'] = 0;
@@ -89,9 +97,9 @@ else {
   $em1 = $prem1;
   $em2 = $prem2;
   if (!strcmp($uid,$prAdmin1) || !strcmp($uid,$prAdmin2)) {
-    $_SESSION['admin'] = 1;
-  } else {
     $_SESSION['admin'] = 0;
+  } else {
+    $_SESSION['admin'] = 1;
   }
   $_SESSION['email1'] = $em1;
   $_SESSION['email2'] = $em2;

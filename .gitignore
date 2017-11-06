@@ -1,2 +1,6 @@
 vendor/
 conf_local.php
+login_log.txt
+pdf/vev.pdf
+conf_sch.php
+phpgrid/conf_sch.php
