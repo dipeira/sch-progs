@@ -26,16 +26,16 @@ SET time_zone = "+00:00";
 -- Δομή πίνακα για τον πίνακα `schools`
 --
 
-CREATE TABLE IF NOT EXISTS `schools` (
+CREATE TABLE IF NOT EXISTS `progs_schools` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `code` int(11) NOT NULL,
-  `type` tinyint(4) NOT NULL,
+  `type` varchar(40) NOT NULL,
   `email1` varchar(50) NOT NULL,
   `dimos` varchar(50) NOT NULL,
   `tel` varchar(40) NOT NULL,
-  `fax` varchar(40) NOT NULL,
-) ENGINE=InnoDB DEFAULT CHARSET=greek;
+  `fax` varchar(40) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Ευρετήρια για άχρηστους πίνακες
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `schools` (
 --
 -- Ευρετήρια για πίνακα `schools`
 --
-ALTER TABLE `schools`
+ALTER TABLE `progs_schools`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -54,7 +54,7 @@ ALTER TABLE `schools`
 --
 -- AUTO_INCREMENT για πίνακα `schools`
 --
-ALTER TABLE `schools`
+ALTER TABLE `progs_schools`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

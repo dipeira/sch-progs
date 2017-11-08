@@ -38,7 +38,7 @@ else
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <head>
-	<title> <?php echo 'Προγράμματα Σχολικών Δραστηριοτήτων $prSxetos'; ?> </title>
+	<title> <?php echo 'Προγράμματα Σχολικών Δραστηριοτήτων '.$prSxetos; ?> </title>
 </head>
 <body>
 <?php
