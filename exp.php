@@ -82,8 +82,8 @@ $rec = mysqli_fetch_assoc($result);
 // check if user can view programme
 if (!$admin)
 {
-	$email = $rec['emails1'];
-	if (!strcmp($email,$_SESSION['email1']) || !strcmp($email,$_SESSION['email2']))
+	$sid = $rec['sch1'];
+	if (!strcmp($sid,$_SESSION['sid']))
 		{}
 	else
 	{

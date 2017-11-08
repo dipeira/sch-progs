@@ -2,10 +2,10 @@
 -- version 4.4.14
 -- http://www.phpmyadmin.net
 --
--- Φιλοξενητής: 127.0.0.1
--- Χρόνος δημιουργίας: 05 Δεκ 2016 στις 14:23:56
--- Έκδοση διακομιστή: 5.6.26
--- Έκδοση PHP: 5.5.28
+-- Ξ¦ΞΉΞ»ΞΏΞΎΞµΞ½Ξ·Ο„Ξ®Ο‚: 127.0.0.1
+-- Ξ§ΟΟΞ½ΞΏΟ‚ Ξ΄Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚: 05 Ξ”ΞµΞΊ 2016 ΟƒΟ„ΞΉΟ‚ 14:23:56
+-- ΞΞΊΞ΄ΞΏΟƒΞ· Ξ΄ΞΉΞ±ΞΊΞΏΞΌΞΉΟƒΟ„Ξ®: 5.6.26
+-- ΞΞΊΞ΄ΞΏΟƒΞ· PHP: 5.5.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,89 +17,88 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES greek */;
 
 --
--- Βάση δεδομένων: `temp`
+-- Ξ’Ξ¬ΟƒΞ· Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½: `temp`
 --
 
 -- --------------------------------------------------------
 
 --
--- Δομή πίνακα για τον πίνακα `progs`
+-- Ξ”ΞΏΞΌΞ® Ο€Ξ―Ξ½Ξ±ΞΊΞ± Ξ³ΞΉΞ± Ο„ΞΏΞ½ Ο€Ξ―Ξ½Ξ±ΞΊΞ± `progs`
 --
 
 CREATE TABLE IF NOT EXISTS `progs` (
   `id` int(11) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `schnip` enum('Δημοτικό','Νηπιαγωγείο','Ειδικό Δημοτικό','Ειδικό Νηπιαγωγείο') DEFAULT NULL,
-  `dimo` enum('Αρχανών - Αστερουσίων','Βιάννου','Γόρτυνας','Ηρακλείου','Μαλεβιζίου','Μινώα Πεδιάδας','Φαιστού','Χερσονήσου') NOT NULL,
   `sch1` int(11) NOT NULL,
   `princ1` varchar(100) NOT NULL,
-  `emails1` text NOT NULL,
   `sch2` int(11) NOT NULL,
   `princ2` varchar(100) NOT NULL,
-  `emails2` text NOT NULL,
-  `praxi` text NOT NULL,
+  `nam1` text NOT NULL,
+  `email1` text NOT NULL,
+  `mob1` text NOT NULL,
+  `eid1` enum('Ξ Ξ•05','Ξ Ξ•06','Ξ Ξ•07','Ξ Ξ•08','Ξ Ξ•11','Ξ Ξ•16','Ξ Ξ•18.41','Ξ Ξ•19-20','Ξ Ξ•60','Ξ Ξ•70') NOT NULL,
+  `his1` enum('ΞΟ‡ΞΉ','ΞΞ±ΞΉ') NOT NULL,
+  `qua1` enum('ΞΟ‡ΞΉ','ΞΞ±ΞΉ') NOT NULL,
+  `nam2` text NOT NULL,
+  `email2` text NOT NULL,
+  `mob2` text NOT NULL,
+  `eid2` enum('Ξ Ξ•05','Ξ Ξ•06','Ξ Ξ•07','Ξ Ξ•08','Ξ Ξ•11','Ξ Ξ•16','Ξ Ξ•18.41','Ξ Ξ•19-20','Ξ Ξ•60','Ξ Ξ•70') NOT NULL,
+  `his2` enum('ΞΟ‡ΞΉ','ΞΞ±ΞΉ') NOT NULL,
+  `qua2` enum('ΞΟ‡ΞΉ','ΞΞ±ΞΉ') NOT NULL,
+  `nam3` text NOT NULL,
+  `email3` text NOT NULL,
+  `mob3` text NOT NULL,
+  `eid3` enum('Ξ Ξ•05','Ξ Ξ•06','Ξ Ξ•07','Ξ Ξ•08','Ξ Ξ•11','Ξ Ξ•16','Ξ Ξ•18.41','Ξ Ξ•19-20','Ξ Ξ•60','Ξ Ξ•70') NOT NULL,
+  `his3` enum('ΞΟ‡ΞΉ','ΞΞ±ΞΉ') NOT NULL,
+  `qua3` enum('ΞΟ‡ΞΉ','ΞΞ±ΞΉ') NOT NULL,
   `titel` text NOT NULL,
   `subti` text NOT NULL,
-  `categ` enum('Αγωγή Υγείας','Περιβαλλοντική Εκπαίδευση','Πολιτιστικών Θεμάτων') NOT NULL,
+  `praxi` int(5) NOT NULL,
+  `praxidate` text NOT NULL,
+  `grade` text NOT NULL,
+  `nr` int(11) NOT NULL,
+  `nr_boys` int(11) NOT NULL,
+  `nr_girls` int(11) NOT NULL,
+  `cha` enum('ΞΞΉΞΊΟ„Ξ® ΞΏΞΌΞ¬Ξ΄Ξ±','Ξ‘ΞΌΞΉΞ³Ξ­Ο‚ Ο„ΞΌΞ®ΞΌΞ±') NOT NULL,
+  `arxeio` enum('ΞΟ‡ΞΉ','ΞΞ±ΞΉ') NOT NULL,
   `theme` text NOT NULL,
   `goal` text NOT NULL,
   `meth` text NOT NULL,
+  `dura` enum('2 ΞΌΞ®Ξ½ΞµΟ‚','3 ΞΌΞ®Ξ½ΞµΟ‚','4 ΞΌΞ®Ξ½ΞµΟ‚','5 ΞΌΞ®Ξ½ΞµΟ‚') NOT NULL,
+  `visit` text NOT NULL,
+  `foreis` text NOT NULL,
   `pedia` text NOT NULL,
-  `dura` enum('2 μήνες','3 μήνες','4 μήνες','5 μήνες') NOT NULL,
+  `categ` enum('Ξ‘Ξ³Ο‰Ξ³Ξ® Ξ¥Ξ³ΞµΞ―Ξ±Ο‚','Ξ ΞµΟΞΉΞ²Ξ±Ξ»Ξ»ΞΏΞ½Ο„ΞΉΞΊΞ® Ξ•ΞΊΟ€Ξ±Ξ―Ξ΄ΞµΟ…ΟƒΞ·','Ξ ΞΏΞ»ΞΉΟ„ΞΉΟƒΟ„ΞΉΞΊΟΞ½ ΞΞµΞΌΞ¬Ο„Ο‰Ξ½') NOT NULL,
+  `diax` set('ΞΞ½Ο„Ο…Ο€Ξ· Ξ­ΞΊΞ΄ΞΏΟƒΞ·','Ξ‘Ξ½Ξ±ΟΟ„Ξ®ΟƒΞµΞΉΟ‚ ΟƒΟ„ΞΏ Ξ΄ΞΉΞ±Ξ΄Ξ―ΞΊΟ„Ο…ΞΏ','Ξ Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ® Ξ²Ξ―Ξ½Ο„ΞµΞΏ','Ξ‘Ο†Ξ―ΟƒΞµΟ‚ - Ο†Ο…Ξ»Ξ»Ξ¬Ξ΄ΞΉΞ±','ΞΞΊΞΈΞµΟƒΞ· ΞΊΞ±Ο„Ξ±ΟƒΞΊΞµΟ…ΟΞ½ - Ο‡ΞµΞΉΟΞΏΟ„ΞµΟ‡Ξ½ΞΉΟΞ½ - Ο†Ο‰Ο„ΞΏΞ³ΟΞ±Ο†ΞΉΟΞ½','Ξ Ξ±ΟΞµΞΌΞ²Ξ¬ΟƒΞµΞΉΟ‚','Ξ†Ξ»Ξ»ΞΏ') NOT NULL,
+  `diax_other` text NOT NULL,
+  `synant` text NOT NULL,
   `m1` text NOT NULL,
   `m2` text NOT NULL,
   `m3` text NOT NULL,
   `m4` text NOT NULL,
   `m5` text NOT NULL,
-  `visit` text NOT NULL,
-  `for1` text NOT NULL,
-  `for2` text NOT NULL,
-  `synant` text NOT NULL,
-  `arxeio` enum('Ναι','Όχι') NOT NULL,
-  `act` text NOT NULL,
-  `prsnt` enum('Ναι','Ίσως','Όχι') NOT NULL,
-  `nam1` text NOT NULL,
-  `email1` text NOT NULL,
-  `mob1` text NOT NULL,
-  `eid1` text NOT NULL,
-  `his1` enum('Ναι','Όχι') NOT NULL,
-  `qua1` enum('Ναι','Όχι') NOT NULL,
-  `nam2` text NOT NULL,
-  `email2` text NOT NULL,
-  `mob2` text NOT NULL,
-  `eid2` text NOT NULL,
-  `his2` enum('Ναι','Όχι') NOT NULL,
-  `qua2` enum('Ναι','Όχι') NOT NULL,
-  `nam3` text NOT NULL,
-  `email3` text NOT NULL,
-  `mob3` text NOT NULL,
-  `eid3` text NOT NULL,
-  `his3` enum('Ναι','Όχι') NOT NULL,
-  `qua3` enum('Ναι','Όχι') NOT NULL,
-  `Nr` int(11) NOT NULL,
-  `cha` enum('Μικτή ομάδα','Αμιγές τμήμα') NOT NULL,
-  `grade` text NOT NULL,
+  `prsnt` enum('ΞΟ‡ΞΉ','ΞΟƒΟ‰Ο‚','ΞΞ±ΞΉ') NOT NULL,  
   `notes` text NOT NULL,
-  `chk` enum('Ναι','Όχι') NOT NULL,
-  `vev` enum('Ναι','Όχι') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=greek;
+  `chk` enum('ΞΟ‡ΞΉ','ΞΞ±ΞΉ') NOT NULL,
+  `vev` enum('ΞΟ‡ΞΉ','ΞΞ±ΞΉ') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Ευρετήρια για άχρηστους πίνακες
+-- Ξ•Ο…ΟΞµΟ„Ξ®ΟΞΉΞ± Ξ³ΞΉΞ± Ξ¬Ο‡ΟΞ·ΟƒΟ„ΞΏΟ…Ο‚ Ο€Ξ―Ξ½Ξ±ΞΊΞµΟ‚
 --
 
 --
--- Ευρετήρια για πίνακα `progs`
+-- Ξ•Ο…ΟΞµΟ„Ξ®ΟΞΉΞ± Ξ³ΞΉΞ± Ο€Ξ―Ξ½Ξ±ΞΊΞ± `progs`
 --
 ALTER TABLE `progs`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT για άχρηστους πίνακες
+-- AUTO_INCREMENT Ξ³ΞΉΞ± Ξ¬Ο‡ΟΞ·ΟƒΟ„ΞΏΟ…Ο‚ Ο€Ξ―Ξ½Ξ±ΞΊΞµΟ‚
 --
 
 --
--- AUTO_INCREMENT για πίνακα `progs`
+-- AUTO_INCREMENT Ξ³ΞΉΞ± Ο€Ξ―Ξ½Ξ±ΞΊΞ± `progs`
 --
 ALTER TABLE `progs`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;

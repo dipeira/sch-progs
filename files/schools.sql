@@ -2,10 +2,10 @@
 -- version 4.4.14
 -- http://www.phpmyadmin.net
 --
--- Φιλοξενητής: 127.0.0.1
--- Χρόνος δημιουργίας: 05 Δεκ 2016 στις 14:23:00
--- Έκδοση διακομιστή: 5.6.26
--- Έκδοση PHP: 5.5.28
+-- Ξ¦ΞΉΞ»ΞΏΞΎΞµΞ½Ξ·Ο„Ξ®Ο‚: 127.0.0.1
+-- Ξ§ΟΟΞ½ΞΏΟ‚ Ξ΄Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚: 05 Ξ”ΞµΞΊ 2016 ΟƒΟ„ΞΉΟ‚ 14:23:00
+-- ΞΞΊΞ΄ΞΏΟƒΞ· Ξ΄ΞΉΞ±ΞΊΞΏΞΌΞΉΟƒΟ„Ξ®: 5.6.26
+-- ΞΞΊΞ΄ΞΏΟƒΞ· PHP: 5.5.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,13 +17,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES greek */;
 
 --
--- Βάση δεδομένων: `temp`
+-- Ξ’Ξ¬ΟƒΞ· Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½: `temp`
 --
 
 -- --------------------------------------------------------
 
 --
--- Δομή πίνακα για τον πίνακα `schools`
+-- Ξ”ΞΏΞΌΞ® Ο€Ξ―Ξ½Ξ±ΞΊΞ± Ξ³ΞΉΞ± Ο„ΞΏΞ½ Ο€Ξ―Ξ½Ξ±ΞΊΞ± `schools`
 --
 
 CREATE TABLE IF NOT EXISTS `schools` (
@@ -32,25 +32,27 @@ CREATE TABLE IF NOT EXISTS `schools` (
   `code` int(11) NOT NULL,
   `type` tinyint(4) NOT NULL,
   `email1` varchar(50) NOT NULL,
-  `email2` varchar(50) NOT NULL
+  `dimos` varchar(50) NOT NULL,
+  `tel` varchar(40) NOT NULL,
+  `fax` varchar(40) NOT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=greek;
 
 --
--- Ευρετήρια για άχρηστους πίνακες
+-- Ξ•Ο…ΟΞµΟ„Ξ®ΟΞΉΞ± Ξ³ΞΉΞ± Ξ¬Ο‡ΟΞ·ΟƒΟ„ΞΏΟ…Ο‚ Ο€Ξ―Ξ½Ξ±ΞΊΞµΟ‚
 --
 
 --
--- Ευρετήρια για πίνακα `schools`
+-- Ξ•Ο…ΟΞµΟ„Ξ®ΟΞΉΞ± Ξ³ΞΉΞ± Ο€Ξ―Ξ½Ξ±ΞΊΞ± `schools`
 --
 ALTER TABLE `schools`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT για άχρηστους πίνακες
+-- AUTO_INCREMENT Ξ³ΞΉΞ± Ξ¬Ο‡ΟΞ·ΟƒΟ„ΞΏΟ…Ο‚ Ο€Ξ―Ξ½Ξ±ΞΊΞµΟ‚
 --
 
 --
--- AUTO_INCREMENT για πίνακα `schools`
+-- AUTO_INCREMENT Ξ³ΞΉΞ± Ο€Ξ―Ξ½Ξ±ΞΊΞ± `schools`
 --
 ALTER TABLE `schools`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;

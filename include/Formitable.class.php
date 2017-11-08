@@ -233,7 +233,9 @@ class Formitable {
 			// if a "set" field is missing then assign empty value
 			// and if any other field type is missing then assign NULL
 			if( isset($this->_post['formitable_signature']) ){
-				$this->_signature = split(',', $this->decrypt($this->_post['formitable_signature']));
+				//$this->_signature = split(',', $this->decrypt($this->_post['formitable_signature']));
+				// sugarvag: Fix for deprecated 'split'
+				$this->_signature = explode(',', $this->decrypt($this->_post['formitable_signature']));
 				foreach($this->_signature as $key){
 					if(!isset($this->_post[$key])){
 						if( isset($this->fields[$key]) && $this->fields[$key]=='set' ){
@@ -288,7 +290,7 @@ class Formitable {
 				}
 
 			}
-
+			
 			// cycle through $this->_post variables to form query assignments
 			foreach($this->_post as $key=>$value){
 
@@ -426,10 +428,15 @@ class Formitable {
 	// new in version 1.5
 	function query($sql,$result_type=false){
 		@mysql_select_db($this->DB,$this->conn);
+		//sugarvag: fix to save in utf8 DB
+		mysql_query("SET NAMES 'utf8'", $this->conn);
+		mysql_query("SET CHARACTER SET 'utf8'", $this->conn); 
 		$result = @mysql_query($sql,$this->conn);
 		if( $result && in_array($result_type,array(MYSQL_ASSOC,MYSQL_NUM,MYSQL_BOTH)) ){
 			$rows = array();
-			while( $row = @mysql_fetch_array($result,$result_type) ) {			    $rows[] = $row;			}
+			while( $row = @mysql_fetch_array($result,$result_type) ) {
+			    $rows[] = $row;
+			}
 			$result = $rows;
 		}
 		return $result;
@@ -1246,7 +1253,9 @@ class Formitable {
 				$pieces = explode('(',$row['Type']);
 				if( count($pieces) > 1 && ($pieces[0] == 'enum' || $pieces[0] == 'set') ){
 					// trim parens and separate values, 1 == "'" and -2 == "')"
-					$options = split("','",substr($pieces[1],1,-2));
+					// sugarvag: Fix for deprecated 'split'
+					//$options = split("','",substr($pieces[1],1,-2));
+					$options = explode("','",substr($pieces[1],1,-2));
 					$fields[$row['Field']] = $options;
 				}
 			}
@@ -1563,9 +1572,12 @@ class Formitable {
 			case 'multi':
 				if(!isset($selectedText)) $selectedText = ' selected';
 				if(
-					($posted && $postValue && preg_match( '/\b'.$fieldValue.'\b/', implode(",",$postValue) )) ||
+					/*($posted && $postValue && preg_match( '/\b'.$fieldValue.'\b/', implode(",",$postValue) )) ||
 					(!$posted && $retrieved && preg_match('/\b'.$fieldValue.'\b/', $recordValue)) ||
-					(!$posted && !$retrieved && $default && preg_match('/\b'.$fieldValue.'\b/', $defaultValue))
+					(!$posted && !$retrieved && $default && preg_match('/\b'.$fieldValue.'\b/', $defaultValue))*/
+					($posted && $postValue && preg_match( '/'.$fieldValue.'/', implode(",",$postValue) )) ||
+					(!$posted && $retrieved && preg_match('/'.$fieldValue.'/', $recordValue)) ||
+					(!$posted && !$retrieved && $default && preg_match('/'.$fieldValue.'/', $defaultValue))
 				){ return $selectedText; }
 			break;
 

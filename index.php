@@ -43,15 +43,15 @@ else
 <body>
 <?php
 // declare and prepare phpgrid
+$theSql = $printVev ? 
+	"SELECT sc.email1,pr.id,sc.name,pr.titel,pr.chk,pr.timestamp,pr.vev FROM $prTable pr JOIN $schTable sc ON pr.sch1 = sc.id" :
+	"SELECT sc.email1,pr.id,sc.name,pr.titel,pr.chk,pr.timestamp FROM $prTable pr JOIN $schTable sc ON pr.sch1 = sc.id";
 
-$dg = $printVev ? 
-	new C_DataGrid("SELECT pr.id,sc.name,pr.titel,pr.chk,pr.timestamp,pr.vev FROM $prTable pr JOIN $schTable sc ON pr.sch1 = sc.id", "id", "$prTable") :
-	new C_DataGrid("SELECT pr.id,sc.name,pr.titel,pr.chk,pr.timestamp FROM $prTable pr JOIN $schTable sc ON pr.sch1 = sc.id", "id", "$prTable");
-
+$dg = new C_DataGrid($theSql, "id", "$prTable");
 $dg->set_locale('el');
 
 $dg -> set_caption("Προγράμματα Σχολικών Δραστηριοτήτων $prSxetos");
-
+$dg ->set_col_hidden("email1");
 $dg ->set_col_property("id", array("name"=>"A/A", "width"=>15));
 $dg ->set_col_property("sch1", array("name"=>"A/A", "width"=>70));
 $dg ->set_col_property("chk", array("name"=>"checked", "width"=>20));
@@ -96,7 +96,7 @@ else {
   $uid = $pruid;
   $em1 = $prem1;
   $em2 = $prem2;
-  if (!strcmp($uid,$prAdmin1) || !strcmp($uid,$prAdmin2)) {
+  if (strcmp($uid,$prAdmin1) <>0 || !strcmp($uid,$prAdmin2) <>0) {
     $_SESSION['admin'] = 0;
   } else {
     $_SESSION['admin'] = 1;
@@ -105,6 +105,12 @@ else {
   $_SESSION['email2'] = $em2;
   $_SESSION['sch_name'] = $sch_name;
 }
+// get school ID & store in session variable
+$conn = new mysqli(PHPGRID_DB_HOSTNAME, PHPGRID_DB_USERNAME, PHPGRID_DB_PASSWORD, PHPGRID_DB_NAME);
+$sql = "SELECT id FROM $schTable WHERE email1='$em1' OR email1='$em2'";
+$result = $conn->query($sql);
+$rs = mysqli_fetch_assoc($result);
+$_SESSION['sid'] = $rs['id'];
 
 if (isset($sch_name))
 	echo "<h2>Σχολείο: ".$sch_name."</h2>";
@@ -114,21 +120,21 @@ if (isset($em1) || isset($em2))
 	if (!$_SESSION['admin']){
 		// Check if records exist
 		$conn = new mysqli(PHPGRID_DB_HOSTNAME, PHPGRID_DB_USERNAME, PHPGRID_DB_PASSWORD, PHPGRID_DB_NAME);
-		$sql = "SELECT * FROM progs WHERE emails1='$em1' OR emails1='$em2'";
+		$sql = "SELECT * FROM $prTable p JOIN $schTable s ON s.id = p.sch1 WHERE s.email1='$em1' OR s.email1='$em2'";
 		$result = $conn->query($sql);
 		// if no results
 		if (!$result->num_rows) {
 			$outmsg = "<h2>Δεν υπάρχουν αποτελέσματα...</h2><p>Ελέγξτε ότι:<ol><li>Ο λογαριασμός με τον οποίο κάνατε είσοδο είναι λογαριασμός <strong>Σχολικής Μονάδας ΠΣΔ <small>(π.χ. για λήψη email, είσοδο στο survey κλπ)</small></strong> και <strong>ΟΧΙ</strong> προσωπικός ή του MySchool*.</li><li>Βεβαιωθείτε ότι η σχολική σας μονάδα έχει προγράμματα σχολικών δραστηριοτήτων.</li><li>Αν ελέγξατε τα παραπάνω και συνεχίζετε να έχετε πρόβλημα, επικοινωνήστε με $contactInfo</li></ol><br>
 			* Σε περίπτωση που είστε συνδεδεμένοι στο MySchool πρέπει να αποσυνδεθείτε και μετά να κάνετε είσοδο στο σύστημα αυτό.</p>";
-			echo '<div style="font-size:10pt;color:black;font-family:arial;">$outmsg</div>';
+			echo '<div style="font-size:10pt;color:black;font-family:arial;">'.$outmsg.'</div>';
 		}
 		// else display phpgrid only for selected school records
 		else
 		{
-			$dg -> set_query_filter("emails1='$em1' OR emails1='$em2'");
+			$dg -> set_query_filter("sc.email1='$em1' OR sc.email1='$em2'");
 			//$dg -> set_col_hidden("done");
 			//$dg -> set_col_hidden("agree");
-			$dg -> set_dimension(1024, 700);
+			$dg -> set_dimension(1024, 400);
 			$dg -> display();
       
       // store sch id
@@ -169,7 +175,7 @@ echo "<form action='' method='POST'>";
 echo "<input type='submit' name='logout' value='Έξοδος'>";
 echo "</form>";
 
-$author = '(c) 2015-16, Βαγγέλης Ζαχαριουδάκης, Τμ.Μηχανογράφησης, Δ/νση Π.Ε. Ηρακλείου.';
+$author = '(c) 2017, Βαγγέλης Ζαχαριουδάκης, Τμ.Μηχανογράφησης, Δ/νση Π.Ε. Ηρακλείου.';
 echo '<div style="font-size:9pt;color:black;font-family:arial;">'.$author.'</div>';
 
 ?>

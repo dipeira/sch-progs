@@ -4,20 +4,90 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1cc0163098d694ab67d832f490200c79",
-    "content-hash": "656a4f603d9855d526a72c1569d530c1",
+    "content-hash": "42c6aa420fd21b5e5a841b9b13542599",
     "packages": [
+        {
+            "name": "itbz/fpdf",
+            "version": "1.7.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mreg-archive/fpdf.git",
+                "reference": "06d02a7bf227a62d37691a4e7e9c3a35efcb41c3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mreg-archive/fpdf/zipball/06d02a7bf227a62d37691a4e7e9c3a35efcb41c3",
+                "reference": "06d02a7bf227a62d37691a4e7e9c3a35efcb41c3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "fpdf": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "no usage restriction"
+            ],
+            "description": "Unofficial PSR-0 compliant version of the FPDF library",
+            "homepage": "http://www.fpdf.org/",
+            "abandoned": "setasign/fpdf",
+            "time": "2013-12-27T14:18:15+00:00"
+        },
+        {
+            "name": "itbz/fpdi",
+            "version": "1.5.2-patch2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mreg-archive/fpdi.git",
+                "reference": "0dd5fb8da3c8d157f6efa87b4888b261e6d524dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mreg-archive/fpdi/zipball/0dd5fb8da3c8d157f6efa87b4888b261e6d524dd",
+                "reference": "0dd5fb8da3c8d157f6efa87b4888b261e6d524dd",
+                "shasum": ""
+            },
+            "require": {
+                "itbz/fpdf": "1.7.*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*",
+                "tecnick.com/tcpdf": "6.*"
+            },
+            "suggest": {
+                "tecnick.com/tcpdf": "FPDI supports TCPDF as a replacement of FPDF."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "fpdi": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Unofficial PSR-0 compliant version of the FPDI library",
+            "abandoned": "setasign/fpdi",
+            "time": "2014-07-30T11:04:43+00:00"
+        },
         {
             "name": "jasig/phpcas",
             "version": "1.3.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Jasig/phpCAS.git",
+                "url": "https://github.com/apereo/phpCAS.git",
                 "reference": "8c74d21630f74278270830fdbdb0c1317bce3f0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Jasig/phpCAS/zipball/8c74d21630f74278270830fdbdb0c1317bce3f0a",
+                "url": "https://api.github.com/repos/apereo/phpCAS/zipball/8c74d21630f74278270830fdbdb0c1317bce3f0a",
                 "reference": "8c74d21630f74278270830fdbdb0c1317bce3f0a",
                 "shasum": ""
             },
@@ -59,7 +129,7 @@
                 "cas",
                 "jasig"
             ],
-            "time": "2015-11-16 20:44:36"
+            "time": "2015-11-16T20:44:36+00:00"
         },
         {
             "name": "phpoffice/phpword",
@@ -155,7 +225,7 @@
                 "word",
                 "writer"
             ],
-            "time": "2015-08-30 14:30:44"
+            "time": "2015-08-30T14:30:44+00:00"
         }
     ],
     "packages-dev": [],
