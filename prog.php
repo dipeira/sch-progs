@@ -89,14 +89,14 @@ $newForm->msg_updateFail = $msg_updateFail;
       $newForm->normalizedField("sch1", $schTable, "ID", "name", "type ASC", $whereClause);
       $newForm->setDefaultValue("sch1",$_SESSION['sid']);
     } else {
-      $newForm->normalizedField("sch1",$schTable,"id","name","type ASC");
+      $newForm->normalizedField("sch1",$schTable,"id","name","type,name ASC");
     }
-    $newForm->normalizedField("sch2",$schTable,"id","name","type ASC");
+    $newForm->normalizedField("sch2",$schTable,"id","name","type,name ASC");
   }
   // if editing
   else {
-    $newForm->normalizedField("sch1",$schTable,"id","name","type ASC");
-    $newForm->normalizedField("sch2",$schTable,"id","name","type ASC");
+    $newForm->normalizedField("sch1",$schTable,"id","name","type,name ASC");
+    $newForm->normalizedField("sch2",$schTable,"id","name","type,name ASC");
   }
 	// force types (display as select instead of radio)
   $newForm->forceTypes(

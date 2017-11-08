@@ -51,8 +51,8 @@
    $newForm->hideFields($hiddenFieldsNew); 
 	
    // if new record
-   $newForm->normalizedField("sch1",$schTable,"id","name","type ASC");
-   $newForm->normalizedField("sch2",$schTable,"id","name","type ASC");
+   $newForm->normalizedField("sch1",$schTable,"id","name","type,name ASC");
+   $newForm->normalizedField("sch2",$schTable,"id","name","type,name ASC");
  
 	// force types (e.g. display as select instead of radio)
    $newForm->forceTypes(
