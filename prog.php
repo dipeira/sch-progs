@@ -86,7 +86,7 @@ $newForm->msg_updateFail = $msg_updateFail;
     // if not admin
     if (!$admin) {
 			$whereClause = "ID = ".$_SESSION['sid'];
-      $newForm->normalizedField("sch1", $schTable, "ID", "name", "value ASC", $whereClause);
+      $newForm->normalizedField("sch1", $schTable, "ID", "name", "type ASC", $whereClause);
       $newForm->setDefaultValue("sch1",$_SESSION['sid']);
     } else {
       $newForm->normalizedField("sch1",$schTable,"id","name","type ASC");
