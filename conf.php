@@ -19,8 +19,6 @@ $prDbname = '';
 $prDbhost = '';
 $prTable = '';
 $schTable = '';
-$olTable = '';
-$studTable = '';
 $prDbusername = '';
 $prDbpassword = '';
 
