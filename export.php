@@ -11,7 +11,7 @@ header('Content-Type: text/html; charset=utf-8');
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <head>
-	<title> <?php echo iconv('Windows-1253', 'UTF-8', 'Προγράμματα Σχολικών Δραστηριοτήτων - Εξαγωγή'); ?> </title>
+	<title> <?php echo 'Ξ ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„Ξ± Ξ£Ο‡ΞΏΞ»ΞΉΞΊΟΞ½ Ξ”ΟΞ±ΟƒΟ„Ξ·ΟΞΉΞΏΟ„Ξ®Ο„Ο‰Ξ½ - Ξ•ΞΎΞ±Ξ³Ο‰Ξ³Ξ®'; ?> </title>
 </head>
 <body>
 <?php
@@ -22,7 +22,7 @@ $dg = new C_DataGrid("SELECT * FROM $prTable pr JOIN $schTable sc1 ON pr.sch1 = 
 
 $dg->set_locale('el');
 
-$dg -> set_caption(mb_convert_encoding("Προγράμματα Σχολικών Δραστηριοτήτων - Προβολή εξαγωγής", "utf-8","iso-8859-7" ));
+$dg -> set_caption("Ξ ΟΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„Ξ± Ξ£Ο‡ΞΏΞ»ΞΉΞΊΟΞ½ Ξ”ΟΞ±ΟƒΟ„Ξ·ΟΞΉΞΏΟ„Ξ®Ο„Ο‰Ξ½ - Ξ ΟΞΏΞ²ΞΏΞ»Ξ® ΞµΞΎΞ±Ξ³Ο‰Ξ³Ξ®Ο‚");
 
 $dg -> set_dimension(1100, 700);
 $dg -> set_pagesize(30);
