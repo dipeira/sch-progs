@@ -10,6 +10,9 @@
 		$(this).height($(this).prop('scrollHeight'));
 	});
 });
+function verify(){
+		return confirm ("Είστε σίγουροι ότι θέλετε να διαγράψετε το πρόγραμμα;");
+}
 </script>
 <title><?php echo 'Σελίδα Προγράμματος'; ?></title>
 </head>
@@ -48,6 +51,12 @@ $newForm->msg_updateFail = $msg_updateFail;
 
 	//retrieve a record for update if GET var is set 
 	if ( isset($_GET['id']) ) {
+		// delete
+		if ($admin && $_GET['delete']) {
+			$result = $newForm->query('DELETE FROM '.$prTable.' WHERE `'.$newForm->pkey.'`="'.$_GET['id'].'"');
+			print str_replace( 'update', 'delete', ($result?$newForm->msg_updateSuccess:$newForm->msg_updateFail) );
+			die();
+		}
 		$newForm->getRecord($_GET['id']);
   }
   else if (isset($_GET['add'])) {
@@ -185,6 +194,9 @@ $newForm->msg_updateFail = $msg_updateFail;
 		if ($canExport){
     	$printText = 'Εκτύπωση';
 			echo "<input type=\"button\" onclick=\"window.open('exp.php?id=".$newForm->getFieldValue('id')."');\" value=\"".$printText."\" />";
+		}
+		if ($admin && $canDelete) {
+			echo "<br><a href='prog.php?delete=1&id=".$_GET['id']."' onclick='return verify()'>Διαγραφή προγράμματος</a>";
 		}
     //echo "<h4>ΣΗΜΕΙΩΣΕΙΣ:<br>1. Για την αποθήκευση οποιασδήποτε αλλαγής πατήστε 'Υποβολή'.<br>2. Τα πεδία: Σχολική μονάδα, Τίτλος προγράμματος, Όνομα-Επώνυμο-Κλάδος εκπ/κών ΔΕ μεταβάλλονται.<br>Για τη μεταβολή τους επικοινωνήστε με $contactInfo</h4><br>";
     echo '<h4>ΣΗΜΕΙΩΣΕΙΣ:<br>Για την αποθήκευση οποιασδήποτε αλλαγής πατήστε \'Υποβολή\'.</h4><br>';

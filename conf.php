@@ -19,13 +19,17 @@ $prDbname = '';
 $prDbhost = '';
 $prTable = '';
 $schTable = '';
+$olTable = '';
+$studTable = '';
 $prDbusername = '';
 $prDbpassword = '';
 
 // User can add new programme
 $canAdd = 1;
 // user can export
-$canExport = 0;
+$canExport = 1;
+// admin can delete
+$canDelete = 1;
 // Print certificate
 $printVev = 0;
 // Array of fields to skip while updating
@@ -41,6 +45,9 @@ $msg_updateFail = '<center><label class="font"><strong>Προέκυψε σφάλ
 $contactInfo = "";
 
 // hide fields @ program form (New/Edit)
-$hiddenFieldsNew = array();
-$hiddenFieldsEdit = array();
+$hiddenFieldsNew = array('id','timestamp');
+$hiddenFieldsEdit = array('id','timestamp');
+// hide fields @ oloimero form (New/Edit)
+$hiddenFieldsOloimeroNew = array('id','timestamp');
+$hiddenFieldsOloimeroEdit = array('id','timestamp');
 ?>
