@@ -18,8 +18,8 @@ header('Content-Type: text/html; charset=utf-8');
 require_once ('conf.php');
 require_once ('phpgrid/conf.php');
 
-$dg = new C_DataGrid("SELECT * FROM $prTable pr JOIN $schTable sc1 ON pr.sch1 = sc1.id JOIN $schTable sc2 ON pr.sch2 = sc2.id", "id", "$prTable");
-
+$theSql = "SELECT sc.*,pr.* FROM $prTable pr JOIN $schTable sc ON pr.sch1 = sc.id";
+$dg = new C_DataGrid($theSql, "id", "$prTable");
 $dg->set_locale('el');
 
 $dg -> set_caption("Προγράμματα Σχολικών Δραστηριοτήτων - Προβολή εξαγωγής");
