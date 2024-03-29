@@ -1,38 +1,38 @@
 <?php
 // Configuration options
 // General options
-$prSxetos = '2017-18';
-$prAdmin1 = '';
-$prAdmin2 = '';
+$prSxetos = '2022-23';
+$prAdmin1 = 'dipeira';
+$prAdmin2 = 'taypeira';
 
 // Debug options
 // $prDebug: set to 1 for local testing, 0 for production
-$prDebug = 0;
+$prDebug = 1;
 // for testing when debug=1
-$prsch_name = '';
-$pruid = '';
-$prem1 = '';
+$prsch_name = 'ΔΙΠΕ Ηρακλείου';
+$pruid = 'dipeira';
+$prem1 = 'mail@15dim-irakl.ira.sch.gr';
 $prem2 = '';
 
 // DB credentials
-$prDbname = '';
-$prDbhost = '';
-$prTable = '';
-$schTable = '';
-$prDbusername = '';
+$prDbname = 'progs';
+$prDbhost = 'localhost';
+$prTable = 'progs';
+$schTable = 'progs_schools';
+$prDbusername = 'root';
 $prDbpassword = '';
 
 // User can add new programme
-$canAdd = 1;
+$canAdd = 0;
 // user can export
-$canExport = 1;
+$canExport = 0;
 // admin can delete
 $canDelete = 1;
 // Print certificate
-$printVev = 0;
+$printVev = 1;
 // Array of fields to skip while updating
 $skippedFields = array();
-//$skippedFields = array('emails1','schnip','dimo','sch1','sch2','emails2','titel','categ','sur1','sur2','sur3');
+//$skippedFields = array('sch1','sch2','titel','nam1','nam2','nam3','eid1','eid2','eid3');
 
 // custom messages
 $msg_insertSuccess = '<center><label class="font"><h3>Η φόρμα υποβλήθηκε με επιτυχία!</h3><br><br>Σε περίπτωση που θέλετε να διορθώσετε κάτι, μην υποβάλετε νέα φόρμα, αλλά πραγματοποιήστε είσοδο με τους κωδικούς ΠΣΔ της Σχολικής Μονάδας & διορθώστε.<br><a href=\'javascript:window.open("","_self").close();\'>Κλείσιμο καρτέλας</a></label></center>';
@@ -40,12 +40,10 @@ $msg_insertFail = '<center><label class="font"><strong>Προέκυψε σφάλ
 $msg_updateSuccess = '<center><label class="font"><h3>Επιτυχής ενημέρωση!</h3><br><a href=\'javascript:window.open("","_self").close();\'>Κλείσιμο καρτέλας</a></label></center>';
 $msg_updateFail = '<center><label class="font"><strong>Προέκυψε σφάλμα.</strong><br/>Η ενημέρωση της εγγραφής απέτυχε.<br><a href=\'javascript:window.open("","_self").close();\'>Κλείσιμο καρτέλας</a></label></center>';
 
-$contactInfo = "";
+$contactInfo = "το τμήμα Εκπαιδευτικών Θεμάτων (2810-529314) ή το τμ. Πληροφορικής (2810-529301).";
 
 // hide fields @ program form (New/Edit)
-$hiddenFieldsNew = array('id','timestamp');
+$hiddenFieldsNew = array('id','timestamp','chk','vev');
 $hiddenFieldsEdit = array('id','timestamp');
-// hide fields @ oloimero form (New/Edit)
-$hiddenFieldsOloimeroNew = array('id','timestamp');
-$hiddenFieldsOloimeroEdit = array('id','timestamp');
+//$hiddenFieldsEdit = array('id','timestamp','vev');
 ?>
