@@ -1,7 +1,7 @@
 <?php
 // Configuration options
 // General options
-$prSxetos = '2022-23';
+$prSxetos = '2023-24';
 $prAdmin1 = 'dipeira';
 $prAdmin2 = 'taypeira';
 
@@ -10,7 +10,7 @@ $prAdmin2 = 'taypeira';
 $prDebug = 1;
 // for testing when debug=1
 $prsch_name = 'ΔΙΠΕ Ηρακλείου';
-$pruid = 'dipeira';
+$pruid = '';
 $prem1 = 'mail@15dim-irakl.ira.sch.gr';
 $prem2 = '';
 
@@ -23,16 +23,15 @@ $prDbusername = 'root';
 $prDbpassword = '';
 
 // User can add new programme
-$canAdd = 0;
-// user can export
-$canExport = 0;
+$canAdd = 1;
 // admin can delete
 $canDelete = 1;
 // Print certificate
-$printVev = 1;
-// Array of fields to skip while updating
-$skippedFields = array();
-//$skippedFields = array('sch1','sch2','titel','nam1','nam2','nam3','eid1','eid2','eid3');
+// $printVev = 1;
+// Lock basic details
+// Lock the following fields for the user 'sch1','sch2','titel','nam1','nam2','nam3','eid1','eid2','eid3'
+$lockBasic = 0;
+
 
 // custom messages
 $msg_insertSuccess = '<center><label class="font"><h3>Η φόρμα υποβλήθηκε με επιτυχία!</h3><br><br>Σε περίπτωση που θέλετε να διορθώσετε κάτι, μην υποβάλετε νέα φόρμα, αλλά πραγματοποιήστε είσοδο με τους κωδικούς ΠΣΔ της Σχολικής Μονάδας & διορθώστε.<br><a href=\'javascript:window.open("","_self").close();\'>Κλείσιμο καρτέλας</a></label></center>';

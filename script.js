@@ -5,6 +5,28 @@ $(document).ready(function() {
     $('#progs').DataTable({
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/el.json',
+        },
+        // columnDefs: [
+        //     { targets: [1, 2], visible: false } // Hide columns 2 and 3 (zero-based indexing)
+        // ],
+        columnDefs: [
+            {
+                targets: 1,
+                className: 'noVis'
+            }
+        ],
+        layout: {
+            topStart: {
+                buttons: [
+                    {
+                        extend: 'colvis',
+                        columns: ':not(.noVis)',
+                        popoverTitle: 'Επιλογή ορατών στηλών'
+                    },
+                    'excelHtml5',
+                    'pdfHtml5'
+                ]
+            }
         }
         //order: [[1, 'asc']]
     });
@@ -40,6 +62,18 @@ $(document).ready(function() {
         dropdownParent: $('#editForm')
     });
 
+
+    // Function to display Bootstrap alert
+    function showAlert(message, type) {
+        var alertClass = 'alert-' + type; // Bootstrap alert class
+        var alertHTML = '<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert">' +
+                            message +
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                        '</div>';
+        $('#alertContainer').append(alertHTML); // Append alert to container
+    }
+
+
     function replaceSelect2(schId){
         var $sch1 = $('#sch1');
         // Get the school name from db
@@ -48,6 +82,10 @@ $(document).ready(function() {
             var $customTextElement = $('<span>&nbsp;&nbsp;&nbsp;<b>' + data + '</b></span>');
             // Append the custom text element to the same location where the Select2 element was
             $customTextElement.insertAfter($sch1);
+            // Create a hidden input element
+            var $hiddenInput = $('<input type="hidden" name="sch1" value="' + schId + '">');
+            // Append the hidden input after the custom text element
+            $hiddenInput.insertAfter($customTextElement);
             // Remove the Select2 element completely
             $sch1.select2('destroy').remove();
             $('#editForm')[0].reset();
@@ -79,6 +117,8 @@ $(document).ready(function() {
         // Extract record ID and fetch details from the server
         var recordId = $(this).data('record-id');
         var schId = $(this).data('sch-id');
+        var lockBasic = $(this).data('lock-basic');
+        var isAdmin = $(this).data('admin');
 
         // Use AJAX to get record details and populate the edit modal
         $.get('db.php', { id: recordId }, function(data) { 
@@ -118,9 +158,23 @@ $(document).ready(function() {
         if (triggeredClass === 'view-record') {
             $("#editForm :input").prop("disabled", true);
             $('.modal-title').text('Προβολή προγράμματος');
+            $('.save-btn').hide();
+            $('.close-btn').prop("disabled", false);
         } else {
             $("#editForm :input").prop("disabled", false);
             $('.modal-title').text('Επεξεργασία προγράμματος');
+            $('.save-btn').show();
+            $('.close-btn').prop("disabled", false);
+            if (lockBasic && !isAdmin) {
+                // disable basic fields
+                // Array of input IDs to disable
+                var inputsToDisable = ['sch1', 'sch2', 'titel', 'nam1', 'nam2', 'nam3', 'eid1', 'eid2', 'eid3'];
+
+                // Loop through the array and disable each input
+                $.each(inputsToDisable, function(index, id) {
+                    $('#' + id).prop('disabled', true);
+                });
+            }
         }
     
         // Show the edit modal
@@ -135,6 +189,7 @@ $(document).ready(function() {
 
         // Serialize the form data to send to db.php
         var formData = $(this).serialize();
+        //console.log(formData);
 
         // Perform an AJAX POST request to db.php to save the edited data
         $.ajax({
@@ -145,16 +200,16 @@ $(document).ready(function() {
             success: function(response) {
                 // Handle the response from db.php (e.g., success message or error handling)
                 if (response.success) {
-                    alert('Επιτυχής αποθήκευση!');
+                    showAlert('Επιτυχής αποθήκευση!', 'success');
                     $('#editModal').modal('hide');
                 } else {
-                    alert('Σφάλμα: ' + response.error);
+                    showAlert('Σφάλμα: ' + response.error, 'error');
                 }
             },
             error: function(err) {
                 console.log(err.responseText);
                 // Handle any errors from the AJAX request
-                alert('Σφάλμα αποθήκευσης...');
+                showAlert('Σφάλμα αποθήκευσης...', 'error');
             }
         });
     });

@@ -40,6 +40,8 @@ if (!$prDebug) {
     <!-- Include Bootstrap CSS and DataTables.net CSS here -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
+		<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" />
+		<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.1/css/buttons.dataTables.css" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
 </head>
 <body>
@@ -95,14 +97,17 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
             * Σε περίπτωση που είστε συνδεδεμένοι στο MySchool πρέπει να αποσυνδεθείτε και μετά να κάνετε είσοδο στο σύστημα αυτό.</p>";
             echo '<div style="font-size:10pt;color:black;font-family:arial;">' . $outmsg . '</div>';
         } else {
+						echo '<div id="alertContainer"></div>';
             // Display DataTable with records
             echo '<table id="progs" class="table table-bordered table-striped">';
             echo '<thead>';
             echo '<tr>';
             echo '<th>A/A</th>';
             echo '<th>Όνομα Σχολείου</th>';
+						echo '<th>Κατηγορία</th>';
             echo '<th>Τίτλος προγράμματος</th>';
             echo '<th>Έλεγχος</th>';
+						echo '<th>Βεβαίωση</th>';
             echo '<th>Τελ. Μεταβολή</th>';
 						echo '<th>Ενέργεια</th>';
             echo '</tr>';
@@ -112,16 +117,21 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
                 echo '<tr>';
                 echo '<td>' . $row['pid'] . '</td>';
                 echo '<td>' . $row['name'] . '</td>';
+								echo '<td>' . $row['categ'] . '</td>';
                 echo '<td>' . $row['titel'] . '</td>';
                 echo '<td>' . $row['chk'] . '</td>';
+								echo '<td>' . $row['vev'] . '</td>';
                 echo '<td>' . date('d-m-Y, h:i:s',strtotime($row['timestamp'])) . '</td>';
-								echo '<td><a href="#" class="btn btn-warning edit-record" data-record-id="'.$row['pid'].'" data-sch-id="'.$schid.'">Επεξεργασία</a>';
+								echo '<td><a href="#" class="btn btn-warning edit-record" data-record-id="'.$row['pid'].'" data-sch-id="'.$schid;
+								echo '" data-lock-basic="'.$lockBasic.'" data-admin="'.$_SESSION['admin'].'">Επεξεργασία</a>';
 								echo '&nbsp;<a href="#" class="btn btn-info view-record" data-record-id="'.$row['pid'].'">Προβολή</a></td>';
                 echo '</tr>';
             }
             echo '</tbody>';
             echo '</table>';
-						echo '<a href="#" class="btn btn-success add-record" data-schid="'.$schid.'">Προσθήκη</a></td>';
+						$add_prog = $_SESSION['admin'] || (!$_SESSION['admin'] && $canAdd) ? '' : 'disabled';
+						echo '<a href="#" class="btn btn-success add-record '.$add_prog.'" data-schid="'.$schid.'">Προσθήκη</a></td>';
+
         }
 				// Logout button
 				echo "<br><br>";
@@ -440,19 +450,27 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
                 </div>
             </div> <!-- of modal body -->
 						<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Κλείσιμο</button>
-								<button type="submit" class="btn btn-primary">Αποθήκευση</button>
+								<button type="button" class="btn btn-secondary close-btn" data-bs-dismiss="modal">Κλείσιμο</button>
+								<button type="submit" class="btn btn-primary save-btn">Αποθήκευση</button>
 						</div>
 						</div> <!-- of form --> 
         </div> <!-- of modal content -->
     </div> <!-- of modal dialog -->
 </div> <!-- of modal -->
-<script src="https://code.jquery.com/jquery-3.7.0.js" type="text/javascript"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous" type="text/javascript"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js" type="text/javascript"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.colVis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.html5.min.js"></script>
+
 <script src="script.js" type="text/javascript"></script>
 
 </body>
