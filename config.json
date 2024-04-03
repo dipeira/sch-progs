@@ -1,0 +1,27 @@
+[
+    {
+        "name": "prSxetos",
+        "description": "Τρέχον σχολικό έτος",
+        "value": "2023-24"
+    },
+    {
+        "name": "prAdmin1",
+        "description": "Όνομα χρήστη διαχειριστή 1",
+        "value": "dipeira"
+    },
+    {
+        "name": "prAdmin2",
+        "description": "Όνομα χρήστη διαχειριστή 2",
+        "value": "taypeira"
+    },
+    {
+        "name": "canAdd",
+        "description": "Ο χρήστης μπορεί να καταχωρήσει πρόγραμμα",
+        "value": true
+    },
+    {
+        "name": "lockBasic",
+        "description": "Κλείδωμα βασικών πεδίων (σχολείο, τίτλος, εκπ/κοί)",
+        "value": false
+    }
+]

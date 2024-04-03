@@ -4,6 +4,16 @@ session_start();
 require_once('conf.php');
 date_default_timezone_set('Europe/Athens');
 
+// Load variables from config.json file
+// Read the contents of config.json
+$jsonString = file_get_contents('config.json');
+// Decode the JSON string to an associative array
+$configData = json_decode($jsonString, true);
+// Extract values from the associative array and set them as variables
+foreach ($configData as $configItem) {
+    ${$configItem['name']} = $configItem['value'];
+}
+
 if (!$prDebug) {
     // Add your CAS server integration here
 	// phpCAS simple client, import phpCAS lib (downloaded with composer)
@@ -93,7 +103,7 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
     echo "<h4>Σχολείο: " . $_SESSION['sch_name'] . "</h4>";
         // if no results
         if (!$result->num_rows) {
-            $outmsg = "<h2>Δεν υπάρχουν αποτελέσματα...</h2><p>Ελέγξτε ότι:<ol><li>Ο λογαριασμός με τον οποίο κάνατε είσοδο είναι λογαριασμός <strong>Σχολικής Μονάδας ΠΣΔ <small>(π.χ. για λήψη email, είσοδο στο survey κλπ)</small></strong> και <strong>ΟΧΙ</strong> προσωπικός ή του MySchool*.</li><li>Βεβαιωθείτε ότι η σχολική σας μονάδα έχει προγράμματα σχολικών δραστηριοτήτων.</li><li>Αν ελέγξατε τα παραπάνω και συνεχίζετε να έχετε πρόβλημα, επικοινωνήστε με $contactInfo</li></ol><br>
+            $outmsg = "<h2>Δεν υπάρχουν αποτελέσματα...</h2><p>Ελέγξτε ότι:<ol><li>Ο λογαριασμός με τον οποίο κάνατε είσοδο είναι λογαριασμός <strong>Σχολικής Μονάδας ΠΣΔ <small>(π.χ. για λήψη email, είσοδο στο survey κλπ)</small></strong> και <strong>ΟΧΙ</strong> προσωπικός ή του MySchool*.</li><li>Βεβαιωθείτε ότι η σχολική σας μονάδα έχει προγράμματα σχολικών δραστηριοτήτων.</li><li>Αν ελέγξατε τα παραπάνω και συνεχίζετε να έχετε πρόβλημα, επικοινωνήστε με τη Δ/νση</li></ol><br>
             * Σε περίπτωση που είστε συνδεδεμένοι στο MySchool πρέπει να αποσυνδεθείτε και μετά να κάνετε είσοδο στο σύστημα αυτό.</p>";
             echo '<div style="font-size:10pt;color:black;font-family:arial;">' . $outmsg . '</div>';
         } else {
@@ -136,9 +146,15 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
 				// Logout button
 				echo "<br><br>";
 				echo '<form action="" method="POST">';
+				if ($_SESSION['admin']){
+					echo "<!-- Button to open the modal -->";
+					echo '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#configModal">Παράμετροι';
+    			//Open Configuration Modal
+					echo '</button><br><br>';
+				}
 				echo '<input type="submit" class="btn btn-danger" name="logout" value="Έξοδος">';
 				echo '</form>';
-		echo "</div>";
+				echo "</div>";
         $conn->close();
     
         
@@ -457,6 +473,26 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
         </div> <!-- of modal content -->
     </div> <!-- of modal dialog -->
 </div> <!-- of modal -->
+
+<!-- Configuration Modal -->
+<div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="configModalLabel">Παράμετροι εφαρμογής</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Configuration settings will be dynamically loaded here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Κλείσιμο</button>
+        <button type="button" class="btn btn-primary" id="saveConfigBtn">Αποθήκευση</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.7.1.js" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous" type="text/javascript"></script>
 <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js" type="text/javascript"></script>

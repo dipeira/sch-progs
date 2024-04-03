@@ -213,5 +213,75 @@ $(document).ready(function() {
             }
         });
     });
+
+    // load parameters from config.json to #configModal
+    function loadConfigData() {
+        $.get("config.json", function(data) {
+            $.each(data, function(index, setting) {
+                var inputHtml = '';
+    
+                if (typeof setting.value === 'boolean') {
+                    inputHtml = '<div class="form-check">' +
+                                    '<input class="form-check-input" type="checkbox" id="' + setting.name + '" ' + (setting.value ? 'checked' : '') + '>' +
+                                    '<label class="form-check-label" for="' + setting.name + '">' + setting.description + '</label>' +
+                                '</div>';
+                } else {
+                    inputHtml = '<div class="mb-3">' +
+                                    '<label for="' + setting.name + '" class="form-label">' + setting.description + '</label>' +
+                                    '<input type="text" class="form-control" id="' + setting.name + '" value="' + setting.value + '">' +
+                                '</div>';
+                }
+    
+                $('#configModal .modal-body').append(inputHtml);
+            });
+        });
+    }
+
+    // save parameters from modal to file
+    function saveConfigData() {
+        var configData = [];
+    
+        $('#configModal .modal-body input').each(function() {
+            var name = $(this).attr('id');
+            var description = $(this).closest('.mb-3').find('label').text();
+            var value = $(this).is(':checkbox') ? $(this).prop('checked') : $(this).val();
+    
+            configData.push({
+                name: name,
+                description: description,
+                value: value
+            });
+        });
+        // console.log(configData);
+    
+        $.ajax({
+            type: "POST",
+            url: "save_config.php",
+            data: { configData: JSON.stringify(configData) },
+            success: function(response) {
+                showAlert("Επιτυχής αποθήκευση παραμέτρων!", 'success');
+                $('#configModal').modal('hide');
+            },
+            error: function(xhr, status, error) {
+                console.error("Error saving configuration:", error);
+                showAlert("Σφάλμα αποθήκευσης παραμέτρων. Παρακαλώ δοκιμάστε ξανά...", 'error');
+            }
+        });
+    }
+
+    // Load configuration data when the modal is shown
+    $('#configModal').on('shown.bs.modal', function() {
+        $('#configModal .modal-body').empty(); // Clear previous content
+        loadConfigData(); // Load configuration data
+    });
+
+    // Save configuration data when Save Changes button is clicked
+    $('#saveConfigBtn').on('click', function() {
+        saveConfigData(); // Save configuration data
+        
+    });
+    
+    
+    
   
 });
