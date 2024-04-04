@@ -99,7 +99,7 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
 		$schid = $_SESSION['admin'] ? 0 : $res1['sch1'];
 		
 		echo '<div class="container">';
-		echo "<h1>Προγράμματα Σχολικών Δραστηριοτήτων $prSxetos</h1>";
+		echo "<center><h1><i class='bi-newspaper'></i>&nbsp;&nbsp;Προγράμματα Σχολικών Δραστηριοτήτων $prSxetos</h1></center>";
     echo "<h4>Σχολείο: " . $_SESSION['sch_name'] . "</h4>";
         // if no results
         if (!$result->num_rows) {
@@ -132,23 +132,22 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
                 echo '<td>' . $row['chk'] . '</td>';
 								echo '<td>' . $row['vev'] . '</td>';
                 echo '<td>' . date('d-m-Y, h:i:s',strtotime($row['timestamp'])) . '</td>';
-								echo '<td><a href="#" class="btn btn-warning edit-record" data-record-id="'.$row['pid'].'" data-sch-id="'.$schid;
-								echo '" data-lock-basic="'.$lockBasic.'" data-admin="'.$_SESSION['admin'].'">Επεξεργασία</a>';
-								echo '&nbsp;<a href="#" class="btn btn-info view-record" data-record-id="'.$row['pid'].'">Προβολή</a></td>';
+								echo '<td><a href="#" class="btn btn-warning edit-record" data-record-id="'.$row['pid'].'" data-sch-id="'.$schid. '" data-canvev="'.$canVev;
+								echo '" data-lock-basic="'.$lockBasic.'" data-admin="'.$_SESSION['admin'].'"><span class="bi-pencil-square"></span>&nbsp;Επεξεργασία</a>';
+								echo '&nbsp;<a href="#" class="btn btn-info view-record" data-record-id="'.$row['pid'].'"><span class="bi-eye"></span>&nbsp;Προβολή</a></td>';
                 echo '</tr>';
             }
             echo '</tbody>';
             echo '</table>';
 						$add_prog = $_SESSION['admin'] || (!$_SESSION['admin'] && $canAdd) ? '' : 'disabled';
-						echo '<a href="#" class="btn btn-success add-record '.$add_prog.'" data-schid="'.$schid.'">Προσθήκη</a></td>';
-
+						echo '<a href="#" class="btn btn-success add-record '.$add_prog.'" data-schid="'.$schid.'"><span class="bi-plus-circle"></span>&nbsp;Προσθήκη</a></td>';
         }
 				// Logout button
 				echo "<br><br>";
 				echo '<form action="" method="POST">';
 				if ($_SESSION['admin']){
 					echo "<!-- Button to open the modal -->";
-					echo '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#configModal">Παράμετροι';
+					echo '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#configModal"><span class="bi-gear"></span>&nbsp;Παράμετροι';
     			//Open Configuration Modal
 					echo '</button><br><br>';
 				}
@@ -466,8 +465,8 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
                 </div>
             </div> <!-- of modal body -->
 						<div class="modal-footer">
-								<button type="button" class="btn btn-secondary close-btn" data-bs-dismiss="modal">Κλείσιμο</button>
-								<button type="submit" class="btn btn-primary save-btn">Αποθήκευση</button>
+								<button type="button" class="btn btn-secondary btn-danger close-btn" data-bs-dismiss="modal"><i class="bi-x-circle"></i>&nbsp;Κλείσιμο</button>
+								<button type="submit" class="btn btn-primary btn-success save-btn"><i class="bi-save"></i>&nbsp;Αποθήκευση</button>
 						</div>
 						</div> <!-- of form --> 
         </div> <!-- of modal content -->
@@ -486,8 +485,8 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
         <!-- Configuration settings will be dynamically loaded here -->
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Κλείσιμο</button>
-        <button type="button" class="btn btn-primary" id="saveConfigBtn">Αποθήκευση</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi-x-circle"></i>&nbsp;Κλείσιμο</button>
+        <button type="button" class="btn btn-primary" id="saveConfigBtn"><i class="bi-save"></i>&nbsp;Αποθήκευση</button>
       </div>
     </div>
   </div>
@@ -506,6 +505,8 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.html5.min.js"></script>
+<!-- Bootstrap Font Icon CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
 <script src="script.js" type="text/javascript"></script>
 

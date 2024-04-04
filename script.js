@@ -162,6 +162,10 @@ $(document).ready(function() {
             $('.close-btn').prop("disabled", false);
         } else {
             $("#editForm :input").prop("disabled", false);
+            // disable #vev if canVev is not set
+            if (!$(this).data('canvev')){
+                $("#vev").prop("disabled", true);
+            }
             $('.modal-title').text('Επεξεργασία προγράμματος');
             $('.save-btn').show();
             $('.close-btn').prop("disabled", false);
@@ -189,7 +193,6 @@ $(document).ready(function() {
 
         // Serialize the form data to send to db.php
         var formData = $(this).serialize();
-        //console.log(formData);
 
         // Perform an AJAX POST request to db.php to save the edited data
         $.ajax({
