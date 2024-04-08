@@ -147,11 +147,13 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
 				echo '<form action="" method="POST">';
 				if ($_SESSION['admin']){
 					echo "<!-- Button to open the modal -->";
-					echo '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#configModal"><span class="bi-gear"></span>&nbsp;Παράμετροι';
+					echo '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#configModal"><span class="bi-gear"></span>&nbsp;Παράμετροι</button>';
+					echo "<br><br>";
+					echo '<button class="btn btn-success" id="exportButton"><span class="bi bi-file-earmark-excel"></span>&nbsp;Εξαγωγή σε Excel</button>';
     			//Open Configuration Modal
-					echo '</button><br><br>';
+					echo '<br><br>';
 				}
-				echo '<input type="submit" class="btn btn-danger" name="logout" value="Έξοδος">';
+				echo '<button type="submit" class="btn btn-danger" name="logout"><span class="bi-box-arrow-right"></span>&nbsp;Έξοδος</button>';
 				echo '</form>';
 				echo "</div>";
         $conn->close();

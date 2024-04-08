@@ -281,10 +281,25 @@ $(document).ready(function() {
     // Save configuration data when Save Changes button is clicked
     $('#saveConfigBtn').on('click', function() {
         saveConfigData(); // Save configuration data
-        
     });
-    
-    
+
+    // call export.php & create xlsx file with all table data
+    $('#exportButton').on('click', function() {
+        event.preventDefault();
+        $.ajax({
+            url: 'export.php',
+            method: 'GET',
+            success: function(response) {
+                var res = JSON.parse(response);
+                var baseUrl = window.location.origin + window.location.pathname; // Get the base URL of your page
+                var fullUrl = baseUrl + res.fileUrl; // Concatenate the base URL with the file URL
+                window.open(fullUrl, '_blank'); // Open the full URL in a new tab
+            },
+            error: function() {
+                console.error('Error exporting data');
+            }
+        });
+    });
     
   
 });
