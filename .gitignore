@@ -7,3 +7,4 @@ phpgrid/conf_sch.php
 composer.lock
 login_log.txt
 excel_file.xlsx
+conf.php
