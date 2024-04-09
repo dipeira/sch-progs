@@ -17,9 +17,9 @@ foreach ($configData as $configItem) {
 if (!$prDebug) {
     // Add your CAS server integration here
 	// phpCAS simple client, import phpCAS lib (downloaded with composer)
-	require_once('vendor/jasig/phpcas/CAS.php');
+	require_once('vendor/autoload.php');
 	//initialize phpCAS using SAML
-	phpCAS::client(SAML_VERSION_1_1,'sso-test.sch.gr',443,'');
+	phpCAS::client(CAS_VERSION_3_0,'sso-01.sch.gr',443,'','https://srv1-dipe.ira.sch.gr');
 	// if logout
 	if (isset($_POST['logout']))
 	{
