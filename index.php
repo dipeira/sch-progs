@@ -16,7 +16,7 @@ foreach ($configData as $configItem) {
 
 if (!$prDebug) {
 	// if user not logged-in, display login form
-	if (!$_SESSION['loggedin'] && !isset($_POST['login-btn'])):
+	if (!$_SESSION['loggedin'] && !isset($_POST['login-btn']) && !$_GET['ticket'] && !isset($_POST['logout'])):
 		?>
 	<!DOCTYPE html>
 		<html lang="en">
