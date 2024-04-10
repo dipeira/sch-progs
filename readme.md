@@ -38,6 +38,6 @@
 School program applications management
 ====================
 
-An easy way to insert, update and watch school program applications.
+An easy way to insert, update and view school program applications.
 
 Authenticates schools via sch.gr's CAS server and gives the ability to submit, edit and export school program applications 24/7, eliminating the need for constant communication with the administration.

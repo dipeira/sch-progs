@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+$_SESSION['loggedin'] = 0;
 require_once('conf.php');
 date_default_timezone_set('Europe/Athens');
 
@@ -15,7 +15,63 @@ foreach ($configData as $configItem) {
 }
 
 if (!$prDebug) {
-    // Add your CAS server integration here
+	// if user not logged-in, display login form
+	if (!$_SESSION['loggedin'] && !isset($_POST['login-btn'])):
+		?>
+	<!DOCTYPE html>
+		<html lang="en">
+			<head>
+				<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>Είσοδος</title>
+				<!-- Bootstrap CSS -->
+				<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+				<style>
+					.jumbotron {
+						background-color: #f8f9fa;
+					}
+				</style>
+			</head>
+			
+			<body>
+				<div class="container mt-5">
+					<div class="p-4 shadow-4 rounded-3" style="background-color: hsl(0, 0%, 94%);">
+						<h1>Προγράμματα Σχολικών Δραστηριοτήτων <?=$prSxetos?></h1>
+						<p>
+							Εισαγωγή, διαχείριση, έγκριση προγραμμάτων σχολικών δραστηριοτήτων
+						</p>
+
+  					<hr class="my-4" />
+
+						<p>
+						Η είσοδος στο σύστημα γίνεται με κωδικούς ΠΣΔ (Πανελληνίου Σχολικού Δικτύου - <u>κωδικοί email</u>) και ΟΧΙ με κωδικούς MySchool
+						</p>
+						<form id="login" method="post">
+							<button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary" name="login-btn">
+								Είσοδος με κωδικούς ΠΣΔ  
+							</button>
+						</form>
+					</div>
+				</div>
+
+				<footer class="footer">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-10">
+								<span>&copy; ΔΙ.Π.Ε. Ηρακλείου - Τμήμα Δ' Πληροφορικής & νέων Τεχνολογιών, 2024</span>
+							</div>	
+							<div class="col-md-2">
+								<a href="https://github.com/dipeira/sch-progs" target="_blank" title="Github"><img src="files/github.png"></a>
+							</div>
+						</div>
+					</div>
+				</footer>
+			</body>
+		</html>
+	<?php
+	die();
+	endif;
+	// Add your CAS server integration here
 	// phpCAS simple client, import phpCAS lib (downloaded with composer)
 	require_once('vendor/autoload.php');
 	//initialize phpCAS using SAML
@@ -26,6 +82,7 @@ if (!$prDebug) {
 		session_unset();
 		session_destroy(); 
 		phpCAS::logout();
+		header("Location: index.php");
 	}
 	
 	// no SSL validation for the CAS server, only for testing environments
