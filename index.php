@@ -75,7 +75,7 @@ if (!$prDebug) {
 	// phpCAS simple client, import phpCAS lib (downloaded with composer)
 	require_once('vendor/autoload.php');
 	//initialize phpCAS using SAML
-	phpCAS::client(CAS_VERSION_3_0,'sso-01.sch.gr',443,'','https://srv1-dipe.ira.sch.gr');
+	phpCAS::client(CAS_VERSION_3_0,'sso.sch.gr',443,'','https://srv1-dipe.ira.sch.gr');
 	// if logout
 	if (isset($_POST['logout']))
 	{
