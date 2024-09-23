@@ -224,13 +224,13 @@ $(document).ready(function() {
                 var inputHtml = '';
     
                 if (typeof setting.value === 'boolean') {
-                    inputHtml = '<div class="form-check">' +
-                                    '<input class="form-check-input" type="checkbox" id="' + setting.name + '" ' + (setting.value ? 'checked' : '') + '>' +
+                    inputHtml = '<div class="mb-3">' +
+                                    '<input class="form-check-input" type="checkbox" id="' + setting.name + '" ' + (setting.value ? 'checked' : '') + '>&nbsp;' +
                                     '<label class="form-check-label" for="' + setting.name + '">' + setting.description + '</label>' +
                                 '</div>';
                 } else {
                     inputHtml = '<div class="mb-3">' +
-                                    '<label for="' + setting.name + '" class="form-label">' + setting.description + '</label>' +
+                                    '<label for="' + setting.name + '" class="form-label">' + setting.description + '</label>&nbsp;' +
                                     '<input type="text" class="form-control" id="' + setting.name + '" value="' + setting.value + '">' +
                                 '</div>';
                 }

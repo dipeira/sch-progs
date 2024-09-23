@@ -28,5 +28,10 @@
         "name": "canVev",
         "description": "Ο χρήστης μπορεί να βεβαιώσει την ολοκλήρωση του προγράμματος",
         "value": false
+    },
+    {
+        "name": "showVev",
+        "description": "Ο χρήστης μπορεί να λάβει βεβαίωση",
+        "value": true
     }
 ]

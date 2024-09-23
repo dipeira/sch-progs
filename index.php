@@ -110,6 +110,11 @@ if (!$prDebug) {
 		<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" />
 		<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.1/css/buttons.dataTables.css" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+		<style>
+			.btn {
+						margin: 2px 0px 2px 0px;
+					}
+		</style>
 </head>
 <body>
 <?php
@@ -191,7 +196,9 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
                 echo '<td>' . date('d-m-Y, h:i:s',strtotime($row['timestamp'])) . '</td>';
 								echo '<td><a href="#" class="btn btn-warning edit-record" data-record-id="'.$row['pid'].'" data-sch-id="'.$schid. '" data-canvev="'.$canVev;
 								echo '" data-lock-basic="'.$lockBasic.'" data-admin="'.$_SESSION['admin'].'"><span class="bi-pencil-square"></span>&nbsp;Επεξεργασία</a>';
-								echo '&nbsp;<a href="#" class="btn btn-info view-record" data-record-id="'.$row['pid'].'"><span class="bi-eye"></span>&nbsp;Προβολή</a></td>';
+								echo '&nbsp;<a href="#" class="btn btn-info view-record" data-record-id="'.$row['pid'].'"><span class="bi-eye"></span>&nbsp;Προβολή</a>';
+								echo $showVev ? '&nbsp;<a href="exp.php?id='.$row['pid'].'" class="btn btn-success" data-record-id="'.$row['pid'].'"><span class="bi-file-earmark-text"></span>&nbsp;Βεβαίωση</a>' : '';
+								echo '</td>';
                 echo '</tr>';
             }
             echo '</tbody>';
@@ -205,10 +212,10 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
 				if ($_SESSION['admin']){
 					echo "<!-- Button to open the modal -->";
 					echo '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#configModal"><span class="bi-gear"></span>&nbsp;Παράμετροι</button>';
-					echo "<br><br>";
+					echo "<br>";
 					echo '<button class="btn btn-success" id="exportButton"><span class="bi bi-file-earmark-excel"></span>&nbsp;Εξαγωγή σε Excel</button>';
     			//Open Configuration Modal
-					echo '<br><br>';
+					echo '<br>';
 				}
 				echo '<button type="submit" class="btn btn-danger" name="logout"><span class="bi-box-arrow-right"></span>&nbsp;Έξοδος</button>';
 				echo '</form>';
@@ -544,7 +551,7 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
         <!-- Configuration settings will be dynamically loaded here -->
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi-x-circle"></i>&nbsp;Κλείσιμο</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi-x-circle"></i>&nbsp;Κλείσιμο</button>&nbsp;
         <button type="button" class="btn btn-primary" id="saveConfigBtn"><i class="bi-save"></i>&nbsp;Αποθήκευση</button>
       </div>
     </div>

@@ -2,6 +2,7 @@
 	"minimum-stability": "dev",
     "require": {
        "apereo/phpcas": "1.6.1",
-       "phpoffice/phpspreadsheet": "1.29.0"
+       "phpoffice/phpspreadsheet": "1.29.0",
+       "phpoffice/phpword": "1.2.0"
     }
 }
