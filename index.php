@@ -121,6 +121,7 @@ if (!$prDebug) {
 if (!$prDebug)
 {
 	$sch_name = phpCAS::getAttribute('description');
+	$sch_code = phpCAS::getAttribute('edupersonorgunitdn-gsnunitcode');
 	$uid = phpCAS::getUser();
 	$em1 = $uid . "@sch.gr";
 	$em2 = phpCAS::getAttribute('mail');
@@ -151,7 +152,7 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
 	// Check if records exist
     $conn = new mysqli($prDbhost, $prDbusername, $prDbpassword, $prDbname);
     if (!$_SESSION['admin']) {    
-        $sql = "SELECT *,p.id as pid FROM $prTable p JOIN $schTable s ON s.id = p.sch1 WHERE s.email1='" . $_SESSION['email1'] . "' OR s.email1='" . $_SESSION['email2'] . "'";
+        $sql = "SELECT *,p.id as pid FROM $prTable p JOIN $schTable s ON s.id = p.sch1 WHERE s.email1='" . $_SESSION['email1'] . "' OR s.email1='" . $_SESSION['email2'] . "' OR s.code='$sch_code'";
 	} else {
 		$sql = "SELECT *,p.id as pid FROM $prTable p JOIN $schTable s ON s.id = p.sch1";
 	}
