@@ -172,7 +172,9 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
 		// get sch id
 		$schid = 0;
 		if (strlen($sch_name) == 0){
-			$sch_name = get_school($sch_code, $conn)['name'];
+			$function_data = get_school($sch_code, $conn);
+			$sch_name = $function_data['name'];
+			$schid = $function_data['id'];
 		}
 		
 		echo '<div class="container">';
@@ -184,7 +186,8 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
             * Σε περίπτωση που είστε συνδεδεμένοι στο MySchool πρέπει να αποσυνδεθείτε και μετά να κάνετε είσοδο στο σύστημα αυτό.</p>";
             echo '<div style="font-size:10pt;color:black;font-family:arial;">' . $outmsg . '</div>';
 						$add_prog = $_SESSION['admin'] || (!$_SESSION['admin'] && $canAdd) ? '' : 'disabled';
-						echo '<a href="#" class="btn btn-success add-record '.$add_prog.'" data-schid=0><span class="bi-plus-circle"></span>&nbsp;Προσθήκη</a></td>';
+						$sid = $schid > 0 ? $schid : 0;
+						echo '<a href="#" class="btn btn-success add-record '.$add_prog.'" data-schid=$sid><span class="bi-plus-circle"></span>&nbsp;Προσθήκη</a></td>';
         } else {
 						echo '<div id="alertContainer"></div>';
             // Display DataTable with records
