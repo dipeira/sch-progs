@@ -293,7 +293,7 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
                     <!-- Edit record details for each tab -->
                     <div class="tab-pane fade show active" id="school" role="tabpanel" aria-labelledby="school-tab">
                         <!-- School details content -->
-												<input type="hidden" class="form-control" id="id" name="id">
+												<input type="hidden" class="form-control" id="id" name="id" value=0>
 												<div class="form-group">
 													<label for="sch1">Σχολείο</label>
 													<select class="form-select" id="sch1" name="sch1" style="width: 50%" required></select>
@@ -331,7 +331,7 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
 												</div>
 												<div class="form-group">
 													<label for="praxi">Πράξη</label>
-													<input type="text" class="form-control" id="praxi" name="praxi" pattern="[0-9]*" title="Please enter only numeric values.">
+													<input type="text" class="form-control" id="praxi" name="praxi" pattern="[0-9]*" title="Please enter only numeric values." value=0>
 												</div>
 												<div class="form-group">
 													<label for="praxidate">Ημερομηνία Πράξης</label>
@@ -343,15 +343,15 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
 												</div>
 												<div class="form-group">
 													<label for="nr">Αριθμός Συμμετεχόντων</label>
-													<input type="text" class="form-control" id="nr" name="nr">
+													<input type="text" class="form-control" id="nr" name="nr" value=0>
 												</div>
 												<div class="form-group">
 													<label for="nr_boys">Αριθμός Αγοριών</label>
-													<input type="text" class="form-control" id="nr_boys" name="nr_boys">
+													<input type="text" class="form-control" id="nr_boys" name="nr_boys" value=0>
 												</div>
 												<div class="form-group">
 													<label for="nr_girls">Αριθμός Κοριτσιών</label>
-													<input type="text" class="form-control" id="nr_girls" name="nr_girls">
+													<input type="text" class="form-control" id="nr_girls" name="nr_girls" value=0>
 												</div>
 												<div class="form-group">
 													<label for="cha">Χαρακτηριστικά ομάδας</label>
@@ -362,7 +362,10 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
 												</div>
 												<div class="form-group">
 													<label for="arxeio">Ύπαρξη αρχείου Σχολικών Δραστηριοτήτων στο Σχολείο</label>
-													<input type="text" class="form-control" id="arxeio" name="arxeio">
+													<select name="arxeio" id="arxeio" class="form-select" aria-label="Κατηγορία">
+														<option value="Όχι">Όχι</option>
+														<option value="Ναι">Ναι</option>
+													</select>
 												</div>
 												<div class="form-group">
 													<label for="theme">Θεματολογία</label>
@@ -512,7 +515,7 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
 												</div>
 												<div class="form-group">
 													<label for="dura">Διάρκεια</label>
-													<input type="text" class="form-control" id="dura" name="dura">
+													<input type="text" class="form-control" id="dura" name="dura" value=0>
 												</div>
                     </div>
                     <div class="tab-pane fade" id="status" role="tabpanel" aria-labelledby="status-tab">
