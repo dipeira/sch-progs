@@ -187,7 +187,7 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
             echo '<div style="font-size:10pt;color:black;font-family:arial;">' . $outmsg . '</div>';
 						$add_prog = $_SESSION['admin'] || (!$_SESSION['admin'] && $canAdd) ? '' : 'disabled';
 						$sid = $schid > 0 ? $schid : 0;
-						echo '<a href="#" class="btn btn-success add-record '.$add_prog.'" data-schid=$sid><span class="bi-plus-circle"></span>&nbsp;Προσθήκη</a></td>';
+						echo '<a href="#" class="btn btn-success add-record '.$add_prog.'" data-schid='.$sid.'><span class="bi-plus-circle"></span>&nbsp;Προσθήκη</a></td>';
         } else {
 						echo '<div id="alertContainer"></div>';
             // Display DataTable with records
