@@ -32,6 +32,6 @@
     {
         "name": "showVev",
         "description": "Ο χρήστης μπορεί να λάβει βεβαίωση",
-        "value": true
+        "value": false
     }
 ]

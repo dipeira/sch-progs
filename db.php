@@ -44,9 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     if ($mysqli->connect_error) {
         die("Connection failed: " . $mysqli->connect_error);
     }
-
     // Query your database to get options from the $schTable table
-    $sql = "SELECT id, name FROM $schTable";
+    if (isset($_GET['term']) ){
+        $sql = "SELECT id, name FROM $schTable WHERE name like '%". $_GET['term'] . "%'";   
+    } else {
+        $sql = "SELECT id, name FROM $schTable";    
+    }    
+    
     $result = $mysqli->query($sql);
 
     $options = array();

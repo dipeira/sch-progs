@@ -134,6 +134,7 @@ if (!$prDebug)
 // fill for local testing
 else {
   $sch_name = $prsch_name;
+	$sch_code = 0;
   $uid = $pruid;
   $em1 = $prem1;
   $em2 = $prem2;
@@ -158,8 +159,7 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
 	}
 		$result = $conn->query($sql);
 		// get sch id
-		$res1 = $result->fetch_assoc();
-		$schid = $_SESSION['admin'] ? 0 : $res1['sch1'];
+		$schid = 0;
 		
 		echo '<div class="container">';
 		echo "<center><h1><i class='bi-newspaper'></i>&nbsp;&nbsp;Προγράμματα Σχολικών Δραστηριοτήτων $prSxetos</h1></center>";
@@ -169,6 +169,8 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
             $outmsg = "<h2>Δεν υπάρχουν αποτελέσματα...</h2><p>Ελέγξτε ότι:<ol><li>Ο λογαριασμός με τον οποίο κάνατε είσοδο είναι λογαριασμός <strong>Σχολικής Μονάδας ΠΣΔ <small>(π.χ. για λήψη email, είσοδο στο survey κλπ)</small></strong> και <strong>ΟΧΙ</strong> προσωπικός ή του MySchool*.</li><li>Βεβαιωθείτε ότι η σχολική σας μονάδα έχει προγράμματα σχολικών δραστηριοτήτων.</li><li>Αν ελέγξατε τα παραπάνω και συνεχίζετε να έχετε πρόβλημα, επικοινωνήστε με τη Δ/νση</li></ol><br>
             * Σε περίπτωση που είστε συνδεδεμένοι στο MySchool πρέπει να αποσυνδεθείτε και μετά να κάνετε είσοδο στο σύστημα αυτό.</p>";
             echo '<div style="font-size:10pt;color:black;font-family:arial;">' . $outmsg . '</div>';
+						$add_prog = $_SESSION['admin'] || (!$_SESSION['admin'] && $canAdd) ? '' : 'disabled';
+						echo '<a href="#" class="btn btn-success add-record '.$add_prog.'" data-schid=0><span class="bi-plus-circle"></span>&nbsp;Προσθήκη</a></td>';
         } else {
 						echo '<div id="alertContainer"></div>';
             // Display DataTable with records
@@ -187,6 +189,7 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
             echo '</thead>';
             echo '<tbody>';
             while ($row = $result->fetch_assoc()) {
+								$schid = $row['sch1'];
                 echo '<tr>';
                 echo '<td>' . $row['pid'] . '</td>';
                 echo '<td>' . $row['name'] . '</td>';
@@ -195,7 +198,7 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
                 echo '<td>' . $row['chk'] . '</td>';
 								echo '<td>' . $row['vev'] . '</td>';
                 echo '<td>' . date('d-m-Y, h:i:s',strtotime($row['timestamp'])) . '</td>';
-								echo '<td><a href="#" class="btn btn-warning edit-record" data-record-id="'.$row['pid'].'" data-sch-id="'.$schid. '" data-canvev="'.$canVev;
+								echo '<td><a href="#" class="btn btn-warning edit-record" data-record-id="'.$row['pid'].'" data-sch-id="'.$row['sch1']. '" data-canvev="'.$canVev;
 								echo '" data-lock-basic="'.$lockBasic.'" data-admin="'.$_SESSION['admin'].'"><span class="bi-pencil-square"></span>&nbsp;Επεξεργασία</a>';
 								echo '&nbsp;<a href="#" class="btn btn-info view-record" data-record-id="'.$row['pid'].'"><span class="bi-eye"></span>&nbsp;Προβολή</a>';
 								echo $showVev ? '&nbsp;<a href="exp.php?id='.$row['pid'].'" class="btn btn-success" data-record-id="'.$row['pid'].'"><span class="bi-file-earmark-text"></span>&nbsp;Βεβαίωση</a>' : '';
@@ -311,7 +314,7 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
                     <div class="tab-pane fade" id="program" role="tabpanel" aria-labelledby="program-tab">
                         <!-- Program details content -->
 												<div class="form-group">
-													<label for="titel">Τίτλος Προγράμματος</label>
+													<label for="titel">Τίτλος Προγράμματος *</label>
 													<input type="text" class="form-control" id="titel" name="titel" required>
 												</div>
 												<div class="form-group">
@@ -377,7 +380,7 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
 										<div class="tab-pane fade" id="teachers" role="tabpanel" aria-labelledby="teachers-tab">
 												<!-- Teachers details content -->
 												<div class="form-group">
-													<label for="nam1">Όν/μο Εκπαιδευτικού 1</label>
+													<label for="nam1">Όν/μο Εκπαιδευτικού 1 *</label>
 													<input type="text" class="form-control" id="nam1" name="nam1" required>
 												</div>
 												<div class="form-group">
