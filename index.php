@@ -4,6 +4,19 @@ $_SESSION['loggedin'] = 0;
 require_once('conf.php');
 date_default_timezone_set('Europe/Athens');
 
+
+// get school data
+function get_school($code, $conn) {
+	global $schTable;
+	$sql = "SELECT id,name FROM $schTable WHERE code = $code";
+	$result = $conn->query($sql);
+	$row = mysqli_fetch_assoc($result);
+	return [
+			'id' => $row['id'],
+			'name' => $row['name']
+	];
+}
+
 // Load variables from config.json file
 // Read the contents of config.json
 $jsonString = file_get_contents('config.json');
@@ -129,7 +142,6 @@ if (!$prDebug)
 		$_SESSION['admin'] = 1;
 	$_SESSION['email1'] = $em1;
 	$_SESSION['email2'] = $em2;
-  $_SESSION['sch_name'] = $sch_name;
 }
 // fill for local testing
 else {
@@ -145,7 +157,6 @@ else {
   }
   $_SESSION['email1'] = $em1;
   $_SESSION['email2'] = $em2;
-  $_SESSION['sch_name'] = $sch_name;
 }
 
 
@@ -160,10 +171,13 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
 		$result = $conn->query($sql);
 		// get sch id
 		$schid = 0;
+		if (strlen($sch_name) == 0){
+			$sch_name = get_school($sch_code, $conn)['name'];
+		}
 		
 		echo '<div class="container">';
 		echo "<center><h1><i class='bi-newspaper'></i>&nbsp;&nbsp;Προγράμματα Σχολικών Δραστηριοτήτων $prSxetos</h1></center>";
-    echo "<h4>Σχολείο: " . $_SESSION['sch_name'] . "</h4>";
+    echo "<h4>Σχολείο: " . $sch_name . "</h4>";
         // if no results
         if (!$result->num_rows) {
             $outmsg = "<h2>Δεν υπάρχουν αποτελέσματα...</h2><p>Ελέγξτε ότι:<ol><li>Ο λογαριασμός με τον οποίο κάνατε είσοδο είναι λογαριασμός <strong>Σχολικής Μονάδας ΠΣΔ <small>(π.χ. για λήψη email, είσοδο στο survey κλπ)</small></strong> και <strong>ΟΧΙ</strong> προσωπικός ή του MySchool*.</li><li>Βεβαιωθείτε ότι η σχολική σας μονάδα έχει προγράμματα σχολικών δραστηριοτήτων.</li><li>Αν ελέγξατε τα παραπάνω και συνεχίζετε να έχετε πρόβλημα, επικοινωνήστε με τη Δ/νση</li></ol><br>
