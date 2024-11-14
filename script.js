@@ -300,6 +300,11 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Refresh the page when the modal is closed
+    $('#editModal').on('hidden.bs.modal', function () {
+        location.reload();
+    });
     
   
 });
