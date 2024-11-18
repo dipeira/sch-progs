@@ -532,7 +532,11 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
 												</div>
 												<div class="form-group">
 													<label for="dura">Διάρκεια</label>
-													<input type="text" class="form-control" id="dura" name="dura" value=0>
+													<select name="dura" id="dura" class="form-select" aria-label="Έλεγχος">
+														<option value="3 μήνες">3 μήνες</option>
+														<option value="4 μήνες">4 μήνες</option>
+														<option value="5 μήνες">5 μήνες</option>
+													</select>
 												</div>
                     </div>
                     <div class="tab-pane fade" id="status" role="tabpanel" aria-labelledby="status-tab">
