@@ -1,6 +1,65 @@
 $(document).ready(function() {
     const formatDate = inputDate => inputDate.split('-').reverse().join('/');
 
+    function confirmDelete(recordId) {
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Είστε σίγουροι;',
+            text: "Δεν είναι δυνατή η μετέπειτα ανάκτηση!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ναι, προχώρησε!',
+            cancelButtonText: 'Ακύρωση'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Proceed with the delete action if confirmed
+                deleteRecord(recordId);
+            }
+        });
+    }
+
+    // Attach to window object for global access
+    window.confirmDelete = confirmDelete;
+
+    function deleteRecord(recordId) {
+        // Perform the delete action using fetch
+        fetch('db.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `delete_id=${recordId}`,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire(
+                        'Επιτυχία!',
+                        'Η εγγραφή διαγράφηκε.',
+                        'success'
+                    ).then(() => {
+                        location.reload(); // Refresh the page or update the UI
+                    });
+                } else {
+                    Swal.fire(
+                        'Σφάλμα!',
+                        'Αποτυχία διαγραφής εγγραφής: ' + data.error,
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                Swal.fire(
+                    'Σφάλμα!',
+                    'Προέκυψε ένα σφάλμα: ' + error.message,
+                    'error'
+                );
+            });
+    }
+
+
     // Initialize DataTable
     $('#progs').DataTable({
         language: {
@@ -101,7 +160,7 @@ $(document).ready(function() {
         $("#editForm :input").prop("disabled", false);
         // get sch id (if not admin)
         var schId = $(this).data('schid');
-        if (!!schId) {
+        if (!!schId && schId != 1) {
             replaceSelect2(schId);
         } else {
             $('#editForm')[0].reset();
@@ -203,8 +262,13 @@ $(document).ready(function() {
             success: function(response) {
                 // Handle the response from db.php (e.g., success message or error handling)
                 if (response.success) {
-                    showAlert('Επιτυχής αποθήκευση!', 'success');
-                    $('#editModal').modal('hide');
+                    Swal.fire(
+                        'Επιτυχία!',
+                        'Επιτυχής αποθήκευση',
+                        'success'
+                    ).then(() => {
+                        location.reload(); // Refresh the page or update the UI
+                    });
                 } else {
                     showAlert('Σφάλμα: ' + response.error, 'error');
                 }
@@ -284,7 +348,7 @@ $(document).ready(function() {
     });
 
     // call export.php & create xlsx file with all table data
-    $('#exportButton').on('click', function() {
+    $('#exportButton').on('click', function(event) {
         event.preventDefault();
         $.ajax({
             url: 'export.php',
@@ -302,9 +366,9 @@ $(document).ready(function() {
     });
 
     // Refresh the page when the modal is closed
-    $('#editModal').on('hidden.bs.modal', function () {
-        location.reload();
-    });
+    // $('#editModal').on('hidden.bs.modal', function () {
+    //     location.reload();
+    // });
     
   
 });

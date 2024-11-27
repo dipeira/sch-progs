@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     echo json_encode($options);
 
 // add record
-} else if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['id'] == 0) {
+} else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id']) && $_POST['id'] == 0) {
     // INSERT operation
     // Connect to your database (adjust these parameters as needed)
     $mysqli = new mysqli($prDbhost, $prDbusername, $prDbpassword, $prDbname);
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     // Return a JSON response indicating success or failure
     echo json_encode($response);
 // update record
-} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['id'] > 0) {
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id']) && $_POST['id'] > 0) {
     // UPDATE operation
     $recordId = $_POST['id'] > 0 ? $_POST['id'] : false;
     // Connect to your database (adjust these parameters as needed)
@@ -175,6 +175,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     $mysqli->close();
 
     // Return a JSON response indicating success or failure
+    echo json_encode($response);
+// delete record
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+    $deleteId = $_POST['delete_id'];
+
+    // Connect to the database
+    $mysqli = new mysqli($prDbhost, $prDbusername, $prDbpassword, $prDbname);
+
+    // Check for a successful database connection
+    if ($mysqli->connect_error) {
+        $response = ['success' => false, 'error' => 'Database connection error'];
+        echo json_encode($response);
+        exit;
+    }
+
+    // Prepare the SQL query to delete the record
+    $sql = "DELETE FROM $prTable WHERE id = ?";
+    $stmt = $mysqli->prepare($sql);
+
+    if ($stmt) {
+        $stmt->bind_param('i', $deleteId);
+
+        // Execute the statement
+        if ($stmt->execute()) {
+            $response = ['success' => true];
+        } else {
+            $response = ['success' => false, 'error' => 'Database delete error: ' . $stmt->error];
+        }
+
+        $stmt->close();
+    } else {
+        $response = ['success' => false, 'error' => 'Statement preparation failed: ' . $mysqli->error];
+    }
+
+    // Close the database connection
+    $mysqli->close();
+
+    // Return a JSON response
     echo json_encode($response);
 } else {
     // Handle invalid or missing parameters

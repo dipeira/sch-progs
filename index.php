@@ -169,14 +169,20 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
 		$sql = "SELECT *,p.id as pid FROM $prTable p JOIN $schTable s ON s.id = p.sch1";
 	}
 		$result = $conn->query($sql);
-		// get sch id
+		// Get sch id
 		$schid = 0;
 		if (strlen($sch_name) == 0){
 			$function_data = get_school($sch_code, $conn);
 			$sch_name = $function_data['name'];
 			$schid = $function_data['id'];
 		}
+		// Ensure 
+		if ($_SESSION['admin']){
+			$schid = 1;
+		}
 		
+		// only admin can delete for now
+		$canDelete = $_SESSION['admin'] ? 1 : 0;
 		echo '<div class="container">';
 		echo "<center><h1><i class='bi-newspaper'></i>&nbsp;&nbsp;Προγράμματα Σχολικών Δραστηριοτήτων $prSxetos</h1></center>";
     echo "<h4>Σχολείο: " . $sch_name . "</h4>";
@@ -206,7 +212,6 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
             echo '</thead>';
             echo '<tbody>';
             while ($row = $result->fetch_assoc()) {
-								$schid = $row['sch1'];
                 echo '<tr>';
                 echo '<td>' . $row['pid'] . '</td>';
                 echo '<td>' . $row['name'] . '</td>';
@@ -219,6 +224,7 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
 								echo '" data-lock-basic="'.$lockBasic.'" data-admin="'.$_SESSION['admin'].'"><span class="bi-pencil-square"></span>&nbsp;Επεξεργασία</a>';
 								echo '&nbsp;<a href="#" class="btn btn-info view-record" data-record-id="'.$row['pid'].'"><span class="bi-eye"></span>&nbsp;Προβολή</a>';
 								echo $showVev ? '&nbsp;<a href="exp.php?id='.$row['pid'].'" class="btn btn-success" data-record-id="'.$row['pid'].'"><span class="bi-file-earmark-text"></span>&nbsp;Βεβαίωση</a>' : '';
+								echo $canDelete ? '&nbsp;<a href="#" class="btn btn-danger" onclick="confirmDelete('.$row['pid'].')"><span class="bi bi-trash"></span>&nbsp;Διαγραφή</a>' : '';
 								echo '</td>';
                 echo '</tr>';
             }
@@ -599,6 +605,9 @@ echo '<div style="font-size:9pt;color:black">' . $author . '</div>';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.html5.min.js"></script>
+<!-- Add SweetAlert2 from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <!-- Bootstrap Font Icon CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
