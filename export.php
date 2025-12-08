@@ -49,7 +49,7 @@ while ($row_data = $result->fetch_assoc()) {
 $writer = new Xlsx($spreadsheet);
 
 // Set the file path where the Excel file will be saved
-$filePath = 'excel_file.xlsx';
+$filePath = 'files/excel_file.xlsx';
 
 // Save the Excel file to the specified path
 $writer->save($filePath);

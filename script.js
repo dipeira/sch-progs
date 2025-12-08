@@ -283,24 +283,34 @@ $(document).ready(function() {
 
     // load parameters from config.json to #configModal
     function loadConfigData() {
-        $.get("config.json", function(data) {
-            $.each(data, function(index, setting) {
-                var inputHtml = '';
-    
-                if (typeof setting.value === 'boolean') {
-                    inputHtml = '<div class="mb-3">' +
-                                    '<input class="form-check-input" type="checkbox" id="' + setting.name + '" ' + (setting.value ? 'checked' : '') + '>&nbsp;' +
-                                    '<label class="form-check-label" for="' + setting.name + '">' + setting.description + '</label>' +
-                                '</div>';
-                } else {
-                    inputHtml = '<div class="mb-3">' +
-                                    '<label for="' + setting.name + '" class="form-label">' + setting.description + '</label>&nbsp;' +
-                                    '<input type="text" class="form-control" id="' + setting.name + '" value="' + setting.value + '">' +
-                                '</div>';
-                }
-    
-                $('#configModal .modal-body').append(inputHtml);
-            });
+        // Add cache-busting parameter to prevent browser caching
+        $.ajax({
+            url: "config.json",
+            dataType: "json",
+            cache: false,  // Disable caching
+            success: function(data) {
+                $.each(data, function(index, setting) {
+                    var inputHtml = '';
+        
+                    if (typeof setting.value === 'boolean') {
+                        inputHtml = '<div class="mb-3">' +
+                                        '<input class="form-check-input" type="checkbox" id="' + setting.name + '" ' + (setting.value ? 'checked' : '') + '>&nbsp;' +
+                                        '<label class="form-check-label" for="' + setting.name + '">' + setting.description + '</label>' +
+                                    '</div>';
+                    } else {
+                        inputHtml = '<div class="mb-3">' +
+                                        '<label for="' + setting.name + '" class="form-label">' + setting.description + '</label>&nbsp;' +
+                                        '<input type="text" class="form-control" id="' + setting.name + '" value="' + setting.value + '">' +
+                                    '</div>';
+                    }
+        
+                    $('#configModal .modal-body').append(inputHtml);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error loading configuration:", error);
+                showAlert("Σφάλμα φόρτωσης παραμέτρων.", 'danger');
+            }
         });
     }
 
@@ -325,13 +335,19 @@ $(document).ready(function() {
             type: "POST",
             url: "save_config.php",
             data: { configData: JSON.stringify(configData) },
+            dataType: "json",
             success: function(response) {
-                showAlert("Επιτυχής αποθήκευση παραμέτρων!", 'success');
-                $('#configModal').modal('hide');
+                if (response.success) {
+                    showAlert("Επιτυχής αποθήκευση παραμέτρων!", 'success');
+                    $('#configModal').modal('hide');
+                } else {
+                    console.error("Error saving configuration:", response.error);
+                    showAlert("Σφάλμα αποθήκευσης παραμέτρων: " + response.error, 'danger');
+                }
             },
             error: function(xhr, status, error) {
                 console.error("Error saving configuration:", error);
-                showAlert("Σφάλμα αποθήκευσης παραμέτρων. Παρακαλώ δοκιμάστε ξανά...", 'error');
+                showAlert("Σφάλμα αποθήκευσης παραμέτρων. Παρακαλώ δοκιμάστε ξανά...", 'danger');
             }
         });
     }
