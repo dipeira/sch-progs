@@ -28,7 +28,7 @@ require_once('conf.php');
 $admin = $_SESSION['admin'];
 
 if (isset($_GET['id'])) {
-    $progId = $_GET['id'];
+    $progId = (int)$_GET['id']; // Cast to integer for safety
 } else {
     die('Authentication Error... (no GET var)');
 }
@@ -42,12 +42,15 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Query database to get the relevant data for the template
-$sql = "SELECT p.id, p.titel, p.nam1, p.categ, p.nam2, p.nam3, s1.name as s1name FROM $prTable p JOIN $schTable s1 ON p.sch1 = s1.id WHERE p.id = $progId";
-$result = mysqli_query($conn, $sql);
+// Use prepared statement to prevent SQL injection
+$stmt = $conn->prepare("SELECT p.id, p.titel, p.nam1, p.categ, p.nam2, p.nam3, s1.name as s1name FROM $prTable p JOIN $schTable s1 ON p.sch1 = s1.id WHERE p.id = ?");
+$stmt->bind_param('i', $progId);
+$stmt->execute();
+$result = $stmt->get_result();
 
 // Fetch record
 $rec = mysqli_fetch_assoc($result);
+$stmt->close();
 
 // Check if the user is allowed to view the program
 if (!$admin) {

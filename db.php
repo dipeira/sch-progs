@@ -4,26 +4,32 @@ require_once('conf.php'); // Include your configuration file
 // get program record
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     // Retrieve the record ID from the GET request
-    $recordId = $_GET['id'];
+    $recordId = (int)$_GET['id']; // Cast to integer for safety
 
     // Use the $recordId to fetch the record details from your database
     $conn = new mysqli($prDbhost, $prDbusername, $prDbpassword, $prDbname);
 
-    // Construct your SQL query based on the record ID
-    $sql = "SELECT p.*, s.name as sch1name FROM $prTable p JOIN $schTable s ON p.sch1 = s.id WHERE p.id = $recordId";
-    $result = $conn->query($sql);
+    // Use prepared statement to prevent SQL injection
+    $stmt = $conn->prepare("SELECT p.*, s.name as sch1name FROM $prTable p JOIN $schTable s ON p.sch1 = s.id WHERE p.id = ?");
+    $stmt->bind_param('i', $recordId);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows == 1) {
         // Fetch the record data
         $recordData = $result->fetch_assoc();
 
-        // Close the database connection
+        // Close the statement and database connection
+        $stmt->close();
         $conn->close();
 
         // Return the record data as JSON (or any other format you prefer)
         header('Content-Type: application/json');
         echo json_encode($recordData);
     } else {
+        // Close the statement and database connection
+        $stmt->close();
+        $conn->close();
         // Handle the case where the record doesn't exist
         echo 'Record not found';
     }
@@ -31,10 +37,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
 // get school name (by id)
 } else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['sch_id'])) {
     $mysqli = new mysqli($prDbhost, $prDbusername, $prDbpassword, $prDbname);
-    // Query your database to get options from the $schTable table
-    $sql = "SELECT name FROM $schTable WHERE id=".$_GET['sch_id'];
-    $result = $mysqli->query($sql);
+    // Use prepared statement to prevent SQL injection
+    $schId = (int)$_GET['sch_id']; // Cast to integer for safety
+    $stmt = $mysqli->prepare("SELECT name FROM $schTable WHERE id = ?");
+    $stmt->bind_param('i', $schId);
+    $stmt->execute();
+    $result = $stmt->get_result();
     $row = $result->fetch_assoc();
+    $stmt->close();
+    $mysqli->close();
     echo $row['name'];
 
 // get all schools
@@ -46,12 +57,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     }
     // Query your database to get options from the $schTable table
     if (isset($_GET['term']) ){
-        $sql = "SELECT id, name FROM $schTable WHERE name like '%". $_GET['term'] . "%'";   
+        // Use prepared statement to prevent SQL injection
+        $searchTerm = "%" . $_GET['term'] . "%";
+        $stmt = $mysqli->prepare("SELECT id, name FROM $schTable WHERE name LIKE ?");
+        $stmt->bind_param('s', $searchTerm);
+        $stmt->execute();
+        $result = $stmt->get_result();
     } else {
-        $sql = "SELECT id, name FROM $schTable";    
+        $result = $mysqli->query("SELECT id, name FROM $schTable");
     }    
-    
-    $result = $mysqli->query($sql);
 
     $options = array();
 
@@ -64,7 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
         }
     }
 
-    // Close the database connection
+    // Close the statement and database connection
+    if (isset($stmt)) {
+        $stmt->close();
+    }
     $mysqli->close();
 
     // Return the options as JSON
