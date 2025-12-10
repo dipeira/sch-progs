@@ -1,4 +1,7 @@
 <?php
+// Increase session timeout to 2 hours (7200 seconds) to prevent users from being signed out during slow typing
+ini_set('session.gc_maxlifetime', 7200);
+ini_set('session.cookie_lifetime', 0); // 0 means cookie expires when browser closes
 session_start();
 $_SESSION['loggedin'] = 0;
 require_once('conf.php');
@@ -236,15 +239,15 @@ if (isset($_SESSION['email1']) || isset($_SESSION['email2'])) {
 				// Logout button
 				echo "<br><br>";
 				echo '<form action="" method="POST">';
+				echo '<div class="d-flex flex-wrap gap-2 align-items-center">';
 				if ($_SESSION['admin']){
 					echo "<!-- Button to open the modal -->";
 					echo '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#configModal"><span class="bi-gear"></span>&nbsp;Παράμετροι</button>';
-					echo "<br>";
-					echo '<button class="btn btn-success" id="exportButton"><span class="bi bi-file-earmark-excel"></span>&nbsp;Εξαγωγή σε Excel</button>';
+					echo '<button type="button" class="btn btn-success" id="exportButton"><span class="bi bi-file-earmark-excel"></span>&nbsp;Εξαγωγή σε Excel</button>';
     			//Open Configuration Modal
-					echo '<br>';
 				}
 				echo '<button type="submit" class="btn btn-danger" name="logout"><span class="bi-box-arrow-right"></span>&nbsp;Έξοδος</button>';
+				echo '</div>';
 				echo '</form>';
 				echo "</div>";
         $conn->close();
